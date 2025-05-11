@@ -1,5 +1,13 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
+
+
+// Store
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+
+
 
 
 export const fcmToken = async () => {
