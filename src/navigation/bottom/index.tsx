@@ -82,15 +82,13 @@ export const BottomTab: React.FC = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    width: '80%',
-    height: verticalScale(60),
+    width: '100%',
+    height: verticalScale(70),
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: horizontalScale(60),
-    paddingTop: verticalScale(15),
+    paddingTop: verticalScale(20),
     position: 'absolute',
     bottom: verticalScale(20),
-    left: Width / 2 - horizontalScale(10),
-    right: Width / 2 - horizontalScale(10),
   },
   tabItem: {
     width: horizontalScale(70),

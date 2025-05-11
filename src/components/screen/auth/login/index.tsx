@@ -1,21 +1,21 @@
-import React, {useState} from 'react';
-import {View, Image, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import React, { useState } from 'react';
+import { View, Image, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import Video from 'react-native-video';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 // Assets
-import {main_BG_Video} from '../../../../assets';
-import {png} from '../../../../assets/png';
+import { main_BG_Video } from '../../../../assets';
+import { png } from '../../../../assets/png';
 
 // Utils & Constants
-import {colors, horizontalScale, verticalScale} from '../../../../utils';
+import { colors, horizontalScale, verticalScale } from '../../../../utils';
 
 // Components
-import {CustomButton, CustomInput, IconButton} from '../../../atoms';
+import { CustomButton, CustomInput, IconButton } from '../../../atoms';
 
 // Navigation
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // Types
 type RootStackParamList = {
@@ -85,7 +85,8 @@ export const Login = () => {
           {/* Login Button */}
           <CustomButton
             title="Login"
-            onPress={() => navigation.navigate('bottom_tab')}
+            // onPress={() => navigation.navigate('bottom_tab')}
+            onPress={() => { }}
           />
 
           {/* Guest Login */}
