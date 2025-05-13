@@ -8,14 +8,9 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-# Add this line to enable modular headers
-use_modular_headers!
-
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
+# Using static frameworks for Firebase
+use_frameworks! :linkage => :static
+$RNFirebaseAsStaticFramework = true
 
 target 'telmi' do
   config = use_native_modules!
@@ -25,6 +20,9 @@ target 'telmi' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+  # Remove modular_headers since we're using static frameworks
+  # pod 'Firebase', :modular_headers => true
+  # pod 'FirebaseAuth', :modular_headers => true
 
   post_install do |installer|
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
