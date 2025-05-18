@@ -1,5 +1,5 @@
-import {instance} from './index';
-import {endpoints} from './endpoints';
+import { instance } from './index';
+import { endpoints } from './endpoints';
 
 export const auth = {
   login: (data: any) => {
