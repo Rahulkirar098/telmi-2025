@@ -1,35 +1,77 @@
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   ImageBackground,
   ScrollView,
   StyleSheet,
-  Text,
   View,
+  Text,
 } from 'react-native';
-import React, {useState} from 'react';
-import {png} from '../../../../assets/png';
-import {height, horizontalScale, verticalScale, width} from '../../../../utils';
-import {CustomButton} from '../../../atoms';
-import {CategoryList} from '../../../molicues';
+import { png } from '../../../../assets/png';
+import { height, horizontalScale, verticalScale, width } from '../../../../utils';
+import { CustomButton } from '../../../atoms';
+import { CategoryList } from '../../../molicues';
+import { requestCameraAndMicPermissions } from '../../../../helper';
+
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../../../../redux/reducer/users';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// Redux
 
 const data: {
   id: 'Sports' | 'Music' | 'Pop Culture' | 'Gaming' | 'TV/Films' | 'Politics';
   iconName: any;
 }[] = [
-  {id: 'Sports', iconName: png.sport},
-  {id: 'Music', iconName: png.music},
-  {id: 'Pop Culture', iconName: png.pop_culture},
-  {id: 'Gaming', iconName: png.gaming},
-  {id: 'TV/Films', iconName: png.tv},
-  {id: 'Politics', iconName: png.politics},
-];
+    { id: 'Sports', iconName: png.sport },
+    { id: 'Music', iconName: png.music },
+    { id: 'Pop Culture', iconName: png.pop_culture },
+    { id: 'Gaming', iconName: png.gaming },
+    { id: 'TV/Films', iconName: png.tv },
+    { id: 'Politics', iconName: png.politics },
+  ];
+
+// Types
+type RootStackParamList = {
+  navigate: (screen: string) => void;
+};
 
 export const Home = () => {
+
+  //Navigation
+  const navigation = useNavigation<RootStackParamList>();
+
+
+  // Redux
+  const dispatch = useDispatch();
+  const { user } = useSelector((state: any) => state.userAuthReducer);
+
+
+  // State to manage category selection
   const [selectedCategory, setSelectedCategory] = useState('All');
 
+
+  const requireUserDataToWatch = () => {
+    return {
+      userId: user._id,
+      profilePhoto: user.profilePhoto,
+      fullName: user.fullName,
+      category: selectedCategory,
+    };
+  };
+
+
+  const handleGoLive = async () => {
+    // let granted = await requestCameraAndMicPermissions();
+    navigation.navigate("golive")
+
+  }
+
+
   return (
-    <View style={{flex: 1}}>
-      <ImageBackground source={png.bg} style={{width, height}}>
+    <View style={{ flex: 1 }}>
+      <ImageBackground source={png.bg} style={{ width, height }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={{
@@ -40,21 +82,21 @@ export const Home = () => {
               marginTop: verticalScale(40),
               alignItems: 'flex-end',
             }}>
-            <Image source={png.equalizer} style={{width: 25, height: 25}} />
+            <Image source={png.equalizer} style={{ width: 25, height: 25 }} />
           </View>
 
           <Image source={png.logo} style={styles.logo} resizeMode="center" />
 
           <CustomButton
-            title="Login"
+            title="WATCH"
             onPress={() => console.log('Login pressed')}
           />
           <CustomButton
-            title="Login"
-            onPress={() => console.log('Login pressed')}
+            title="GO LIVE"
+            onPress={handleGoLive}
           />
 
-          <View style={{marginVertical: verticalScale(20)}}>
+          <View style={{ marginVertical: verticalScale(20) }}>
             <CategoryList
               data={data}
               setSelectedCategory={setSelectedCategory}

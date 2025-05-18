@@ -7,6 +7,10 @@ import {
   ResetPassword,
 } from '../components/screen/auth';
 
+import {
+  GoLive
+} from '../components/screen/main';
+
 export const auhtNavigation = [
   {
     name: 'splash',
@@ -32,4 +36,11 @@ export const auhtNavigation = [
     name: 'reset_password',
     component: ResetPassword,
   },
+];
+
+export const mainNavigation = [
+  {
+    name: 'golive',
+    component: GoLive,
+  }
 ];

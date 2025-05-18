@@ -7,11 +7,12 @@ export const fcmToken = async () => {
 
         let token = await AsyncStorage.getItem('fcmToken');
         if (token) {
-            console.log(token, "===@@@ token");
+        console.log(token);
+
             return;
         }
         await messaging().registerDeviceForRemoteMessages();
-        let fcmToken = await messaging().getToken();
+        let fcmToken = await messaging().getToken();        
         await AsyncStorage.setItem('fcmToken', fcmToken);
     } catch (error) {
         console.log('Error retrieving or storing FCM Token:', error);

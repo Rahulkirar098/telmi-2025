@@ -1,28 +1,39 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {auhtNavigation} from '../routes';
-import {BottomTab} from '../bottom';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { auhtNavigation, mainNavigation } from '../routes';
+import { BottomTab } from '../bottom';
 
-const AuthStack = createNativeStackNavigator();
+const NavigateStack = createNativeStackNavigator();
 
 export const StackNavigation = () => {
   return (
-    <AuthStack.Navigator
+    <NavigateStack.Navigator
       initialRouteName={'splash'}
       screenOptions={{
         headerShown: false,
       }}>
+        
       {auhtNavigation.map((item, index) => (
-        <AuthStack.Screen
+        <NavigateStack.Screen
           key={index}
           name={item.name}
           component={item.component}
         />
       ))}
-      <AuthStack.Screen
+      
+      <NavigateStack.Screen
         name="bottom_tab"
         component={BottomTab}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
-    </AuthStack.Navigator>
+
+      {mainNavigation.map((item, index) => (
+        <NavigateStack.Screen
+          key={index}
+          name={item.name}
+          component={item.component}
+        />
+      ))}
+
+    </NavigateStack.Navigator>
   );
 };
