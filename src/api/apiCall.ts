@@ -1,8 +1,14 @@
-import {instance} from './index';
-import {endpoints} from './endpoints';
+import { instance } from './index';
+import { endpoints } from './endpoints';
 
 export const auth = {
-  login: (data: any) => {
-    return instance.post(endpoints.auth.loginUser, data);
+  login: (body: any) => {
+    return instance.post(endpoints.auth.loginUser, body);
   },
 };
+
+export const main = {
+  getSingleProfile: (body: any) => {
+    return instance.post(endpoints.main.getSingleProfile, body)
+  }
+}

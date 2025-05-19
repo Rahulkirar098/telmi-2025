@@ -17,6 +17,13 @@ import { CustomButton, CustomInput, IconButton } from '../../../atoms';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+//
+import { Formik } from 'formik';
+import { validationSchema } from '../../../../helper/yupSchema';
+import { loginType } from '../../../../helper';
+import { auth } from '../../../../api/apiCall';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // Types
 type RootStackParamList = {
   signup: undefined;
@@ -30,10 +37,22 @@ export const Login = () => {
   // Navigation
   const navigation = useNavigation<NavigationProp>();
 
-  // State Hooks
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleLogin = async (values: loginType) => {
+    //FCM TOKEN
+    let fcmToken = await AsyncStorage.getItem("fcmToken");
+    //FCM TOKEN
+
+    let response = await auth.login({ ...values, deviceToken: fcmToken })
+    let userData = response.data.user;
+    let token = response.data.jwtToken;
+    if (userData) {
+      await AsyncStorage.setItem('token', token);
+      await AsyncStorage.setItem('userId', userData._id);
+      navigation.navigate("bottom_tab")
+    }
+  };
 
   // Render
   return (
@@ -51,43 +70,59 @@ export const Login = () => {
         enableOnAndroid
         keyboardShouldPersistTaps="handled">
         <View style={styles.content}>
-          {/* Logo */}
           <Image source={png.logo} style={styles.logo} resizeMode="center" />
 
-          {/* Email Input */}
-          <CustomInput
-            label="Email"
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter your email"
-            keyboardType="email-address"
-          />
+          <Formik
+            initialValues={{ email: '', password: '' }}
+            validationSchema={validationSchema.login}
+            onSubmit={handleLogin}>
+            {({
+              handleChange,
+              handleSubmit,
+              handleBlur,
+              values,
+              touched,
+              errors,
+            }) => (
+              <>
+                {/* Email Input */}
+                <CustomInput
+                  label="Email"
+                  value={values.email}
+                  placeholder="Enter your email"
+                  keyboardType="email-address"
+                  onBlur={() => handleBlur('email')}
+                  onChangeText={handleChange('email')}
+                  error={(touched.email && errors.email) || ''}
+                />
 
-          {/* Password Input with Toggle */}
-          <CustomInput
-            label="Password"
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Enter your password"
-            secureTextEntry
-            showToggle
-            showPassword={showPassword}
-            onTogglePassword={() => setShowPassword(!showPassword)}
-          />
+                {/* Password Input with Toggle */}
+                <CustomInput
+                  label="Password"
+                  value={values.password}
+                  placeholder="Enter your password"
+                  secureTextEntry
+                  showToggle
+                  showPassword={showPassword}
+                  onTogglePassword={() => setShowPassword(!showPassword)}
+                  error={(touched.password && errors.password) || ''}
+                  onChangeText={handleChange('password')}
+                  onBlur={() => handleBlur('password')}
+                />
 
-          {/* Forgot Password */}
-          <TouchableOpacity
-            style={styles.alignRight}
-            onPress={() => navigation.navigate('forgot_password')}>
-            <Text style={styles.guestText}>Forgot password</Text>
-          </TouchableOpacity>
+                {/* Forgot Password */}
+                <TouchableOpacity
+                  style={styles.alignRight}
+                  onPress={() => navigation.navigate('forgot_password')}>
+                  <Text style={styles.guestText}>Forgot password</Text>
+                </TouchableOpacity>
 
-          {/* Login Button */}
-          <CustomButton
-            title="Login"
-            // onPress={() => navigation.navigate('bottom_tab')}
-            onPress={() => { }}
-          />
+                {/* Login Button */}
+                <CustomButton title="Login" onPress={handleSubmit} />
+              </>
+            )
+            }
+          </Formik>
 
           {/* Guest Login */}
           <TouchableOpacity style={styles.guestButton}>
