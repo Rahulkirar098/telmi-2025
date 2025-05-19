@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Give all the required permissions to app -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     
@@ -30,5 +31,23 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+
+
+    <meta-data
+      android:name="live.videosdk.rnfgservice.notification_channel_name"
+      android:value="Meeting Notification"
+     />
+    <meta-data
+    android:name="live.videosdk.rnfgservice.notification_channel_description"
+    android:value="Whenever meeting started notification will appear."
+    />
+    <meta-data
+    android:name="live.videosdk.rnfgservice.notification_color"
+    android:resource="@color/red"
+    />
+    <service android:name="live.videosdk.rnfgservice.ForegroundService" android:foregroundServiceType="mediaProjection"></service>
+    <service android:name="live.videosdk.rnfgservice.ForegroundServiceTask"></service>
+
+
     </application>
 </manifest>
