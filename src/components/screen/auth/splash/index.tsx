@@ -27,7 +27,7 @@ export const SplashVideoScreen: React.FC = () => {
 
   const handleNavigateToLogin = () => {
     setTimeout(() => {
-      navigation.navigate('login');
+      navigation.navigate('bottom_tab');
     }, 3000);
   };
 
