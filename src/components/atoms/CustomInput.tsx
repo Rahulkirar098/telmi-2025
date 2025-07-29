@@ -20,6 +20,8 @@ interface CustomInputProps extends TextInputProps {
   showToggle?: boolean;
   showPassword?: boolean;
   onTogglePassword?: () => void;
+  error?: string;
+  onBlur?: () => void;
 }
 
 export const CustomInput: React.FC<CustomInputProps> = ({
@@ -32,22 +34,23 @@ export const CustomInput: React.FC<CustomInputProps> = ({
   showToggle = false,
   showPassword = false,
   onTogglePassword,
-  ...rest
+  error,
+  onBlur
 }) => {
   return (
     <View style={styles.inputGroup}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: error ? colors.red : colors.white }]}>{label}</Text>
       <View style={styles.passwordWrapper}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: error ? colors.red : colors.white }]}
           value={value}
           onChangeText={onChangeText}
-          placeholder={placeholder}
-          placeholderTextColor="rgba(232, 232, 232, 1)"
+          placeholder={error ? error : placeholder}
+          placeholderTextColor={error ? colors.red : colors.offWhite}
           keyboardType={keyboardType}
           secureTextEntry={secureTextEntry && !showPassword}
           autoCapitalize="none"
-          {...rest}
+          onBlur={onBlur}
         />
         {showToggle && (
           <TouchableOpacity onPress={onTogglePassword} style={styles.eyeButton}>
@@ -72,7 +75,6 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(10),
   },
   label: {
-    color: colors.white,
     fontSize: horizontalScale(16),
     fontWeight: '500',
     marginBottom: verticalScale(8),
@@ -81,7 +83,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: verticalScale(60),
     borderWidth: 1,
-    borderColor: colors.white,
     borderRadius: horizontalScale(10),
     paddingHorizontal: horizontalScale(20),
     paddingRight: horizontalScale(50),

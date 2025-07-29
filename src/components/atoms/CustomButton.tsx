@@ -1,11 +1,11 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, GestureResponderEvent } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { colors, horizontalScale, verticalScale } from '../../utils'; 
+import { colors, horizontalScale, verticalScale } from '../../utils';
 
 interface CustomButtonProps {
   title: string;
-  onPress: (event: GestureResponderEvent) => void;
+  onPress: () => void;
 }
 
 export const CustomButton: React.FC<CustomButtonProps> = ({ title, onPress }) => {
