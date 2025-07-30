@@ -11,6 +11,8 @@ import {
   GoLive
 } from '../components/screen/main';
 
+import {GoLiveTwo} from "../components/screen/main/goLiveTwo"
+
 export const auhtNavigation = [
   {
     name: 'splash',
@@ -41,6 +43,6 @@ export const auhtNavigation = [
 export const mainNavigation = [
   {
     name: 'golive',
-    component: GoLive,
+    component: GoLiveTwo,
   }
 ];
