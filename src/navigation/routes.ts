@@ -8,7 +8,8 @@ import {
 } from '../components/screen/auth';
 
 import {
-  GoLive
+  FriendList,
+  InviteFriend,
 } from '../components/screen/main';
 
 import {GoLiveTwo} from "../components/screen/main/goLiveTwo"
@@ -44,5 +45,13 @@ export const mainNavigation = [
   {
     name: 'golive',
     component: GoLiveTwo,
-  }
+  },
+  {
+    name: 'friendlist',
+    component: FriendList,
+  },
+  {
+    name: 'invitefriend',
+    component: InviteFriend,
+  },
 ];
