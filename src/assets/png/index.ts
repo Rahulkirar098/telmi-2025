@@ -1,3 +1,5 @@
+import { request } from "react-native-permissions";
+
 export const png = {
   logo: require('./logo.png'),
   eye: require('./eye.png'),
@@ -31,4 +33,6 @@ export const png = {
   like: require('./like.png'),
   video: require('./video.png'),
   userAdd: require('./userAdd.png'),
+  blLike:require('./blLike.png'),
+  blView:require('./blView.png'),
 };

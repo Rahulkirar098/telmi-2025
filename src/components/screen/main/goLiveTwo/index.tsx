@@ -9,6 +9,7 @@ import {
   Alert,
   FlatList,
   Dimensions,
+  ImageBackground,
 } from 'react-native';
 import {
   MeetingProvider,
@@ -20,8 +21,8 @@ import {
 } from '@videosdk.live/react-native-sdk';
 import FastImage from 'react-native-fast-image';
 import {png} from '../../../../assets/png';
-import {horizontalScale} from '../../../../utils';
-import { Controls } from '../stream/Controls';
+import {height, horizontalScale, platform, width} from '../../../../utils';
+import {Controls} from '../stream/Controls';
 
 register();
 
@@ -91,7 +92,7 @@ function LSContainer({streamId, onLeave}: any) {
   console.log(streamId, '===@@@');
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {joined ? (
         <StreamView />
       ) : (
@@ -99,7 +100,7 @@ function LSContainer({streamId, onLeave}: any) {
           <Text style={styles.buttonText}>Join Stream</Text>
         </TouchableOpacity>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -112,22 +113,25 @@ function StreamView() {
     )
     .map(([key]) => key);
 
+
+    console.log(participantsArrId, '===@@@');
+
   return (
-    <View style={{flex: 1}}>
+    <View>
       <Controls />
       <FlatList
         data={participantsArrId}
         renderItem={({item}) => {
           return (
-            <View style={{flex: 1, height: Dimensions.get('window').height}}>
+            // <View style={{flex: 1, height: Dimensions.get('window').height}}>
+
+            <View style={{flex: 1, height: 500}}>
               <Participant participantId={item} />
             </View>
           );
         }}
-        style={{
-          borderWidth: 2,
-          borderColor: 'green',
-        }}
+        keyExtractor={(item, index) => index.toString()}
+        style={{borderWidth: 1, borderColor: 'black'}}
       />
     </View>
   );
@@ -142,7 +146,6 @@ function Participant({participantId}: any) {
       streamURL={new MediaStream([webcamStream?.track]).toURL()}
       objectFit={'cover'}
       style={{
-        flex: 1,
         width: '100%',
         height: '100%',
       }}
@@ -155,7 +158,57 @@ function Participant({participantId}: any) {
 }
 
 // Component for managing stream controls
+function LSControls() {
+  //@ts-ignore
+  const {leave, toggleMic, toggleWebcam, changeMode, meeting} = useMeeting(); // Access methods
 
+  const currentMode = meeting.localParticipant.mode; // Get the current participant's mode
+
+  console.log(toggleWebcam, '===@@@');
+
+  return (
+    <View style={styles.controls}>
+      <View
+        style={{
+          width: '100%',
+          padding: horizontalScale(20),
+        }}>
+        <FastImage source={png.equalizer} style={{width: 25, height: 25}} />
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={leave}>
+        <Text style={styles.buttonText}>Leave</Text>
+      </TouchableOpacity>
+      {currentMode === Constants.modes.SEND_AND_RECV && (
+        <>
+          {/* @ts-ignore */}
+          <TouchableOpacity style={styles.button} onPress={toggleMic}>
+            <Text style={styles.buttonText}>Toggle Mic</Text>
+          </TouchableOpacity>
+          {/* @ts-ignore */}
+          <TouchableOpacity style={styles.button} onPress={toggleWebcam}>
+            <Text style={styles.buttonText}>Toggle Camera</Text>
+          </TouchableOpacity>
+        </>
+      )}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() =>
+          changeMode(
+            currentMode === Constants.modes.SEND_AND_RECV
+              ? Constants.modes.RECV_ONLY
+              : Constants.modes.SEND_AND_RECV,
+          )
+        }>
+        <Text style={styles.buttonText}>
+          {currentMode === Constants.modes.SEND_AND_RECV
+            ? 'Switch to Audience'
+            : 'Switch to Host'}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
 
 export const GoLiveTwo = () => {
   const [streamId, setStreamId] = useState(null); // Holds the current stream ID
@@ -179,11 +232,9 @@ export const GoLiveTwo = () => {
         mode: mode as any,
       }}
       token={token}>
-      {/* Renders the live stream container if a stream is active */}
       <LSContainer streamId={streamId} onLeave={onStreamLeave} />
     </MeetingProvider>
   ) : (
-    // Renders the join view if no stream is active
     <JoinView initializeStream={initializeStream} setMode={setMode} />
   );
 };
@@ -191,10 +242,8 @@ export const GoLiveTwo = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6FF',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'blue',
+    paddingTop: platform == 'ios' ? '15%' : '10%',
+    backgroundColor: 'red',
   },
   button: {
     backgroundColor: '#1178F8',
@@ -223,15 +272,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     position: 'absolute',
     zIndex: 9999999,
-    borderWidth: 5,
-    borderColor: 'yellow',
   },
   noMedia: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
-    backgroundColor: 'grey',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    flexWrap: 'wrap',
+    backgroundColor: 'gray',
+    position: 'absolute',
+    zIndex: 9999999,
   },
   noMediaText: {
     fontSize: 16,
