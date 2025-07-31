@@ -2,11 +2,9 @@ import React from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   TextInput,
 } from 'react-native';
-import {useMeeting, Constants} from '@videosdk.live/react-native-sdk';
 import FastImage from 'react-native-fast-image';
 import {png} from '../../../../assets/png';
 import {
@@ -20,11 +18,6 @@ import {colors} from '../../../../utils/colors_palette';
 import {demoImg} from '../../../../assets';
 
 export const Controls = () => {
-  //@ts-ignore
-  const {leave, toggleMic, toggleWebcam, changeMode, meeting} = useMeeting();
-
-  const currentMode = meeting.localParticipant.mode;
-
   return (
     <View style={styles.controls}>
       <View style={styles.iconWrapper}>

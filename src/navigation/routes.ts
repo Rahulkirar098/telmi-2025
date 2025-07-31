@@ -10,9 +10,11 @@ import {
 import {
   FriendList,
   InviteFriend,
+  Stream,
+  StreamHls,
 } from '../components/screen/main';
 
-import {GoLiveTwo} from "../components/screen/main/goLiveTwo"
+import {GoLiveTwo} from "../components/screen/main/goLiveTwo" 
 
 export const auhtNavigation = [
   {
@@ -54,4 +56,12 @@ export const mainNavigation = [
     name: 'invitefriend',
     component: InviteFriend,
   },
+  {
+    name: 'stream',
+    component: Stream,
+  },
+  {
+    name: 'streamHls',
+    component: StreamHls,
+  },  
 ];

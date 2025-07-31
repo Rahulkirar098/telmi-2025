@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {png} from '../../../../assets/png';
 import {height, horizontalScale, verticalScale, width} from '../../../../utils';
-import {CustomButton} from '../../../atoms';
+import {CustomButton, Loader} from '../../../atoms';
 import {CategoryList} from '../../../molicues';
 import {requestCameraAndMicPermissions} from '../../../../helper';
 
@@ -39,6 +39,11 @@ type RootStackParamList = {
   navigate: (screen: string) => void;
 };
 
+///Video SDK
+import {createStream} from '../../../../api/videoSdkApiCall';
+import {token} from '../../../../api/env';
+import {Constants} from '@videosdk.live/react-native-sdk';
+
 export const Home = () => {
   //Navigation
   const navigation = useNavigation<RootStackParamList>();
@@ -62,9 +67,26 @@ export const Home = () => {
     };
   };
 
+  //GO Live
+  const [loader, setLoader] = useState(false);
+  const [streamId, setStreamId] = useState(null);
+
+  const initializeStream = async (id: any) => {
+    const newStreamId = id || (await createStream(token));
+    setStreamId(newStreamId);
+    setLoader(false);
+    console.log(loader, '===@@@3');
+    return newStreamId;
+  };
+
   const handleGoLive = async () => {
-    // let granted = await requestCameraAndMicPermissions();
-    navigation.navigate('golive');
+    // setLoader(true);
+    // console.log(loader, '===@@@2');
+    // let id = await initializeStream(streamId);
+    // console.log(id, '===@@@1');
+
+    // // let granted = await requestCameraAndMicPermissions();
+    navigation.navigate('streamHls');
   };
 
   return (
@@ -83,7 +105,7 @@ export const Home = () => {
             <Image source={png.equalizer} style={{width: 25, height: 25}} />
           </View>
 
-          <Image source={png.logo} style={styles.logo} resizeMode="center" />
+          <Image source={png.logo} style={styles.logo} resizeMode="contain" />
 
           <CustomButton
             title="WATCH"
@@ -98,6 +120,8 @@ export const Home = () => {
             />
           </View>
         </ScrollView>
+
+        <Loader visible={loader} />
 
         {/* <FriendRequest
           visible={true}

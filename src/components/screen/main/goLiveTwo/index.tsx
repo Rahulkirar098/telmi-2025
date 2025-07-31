@@ -21,28 +21,11 @@ import {
 } from '@videosdk.live/react-native-sdk';
 import FastImage from 'react-native-fast-image';
 import {png} from '../../../../assets/png';
-import {height, horizontalScale, platform, width} from '../../../../utils';
+import {horizontalScale, platform} from '../../../../utils';
 import {Controls} from '../stream/Controls';
-
+import {token} from '../../../../api/env';
+import {createStream} from '../../../../api/videoSdkApiCall';
 register();
-
-let token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiJkMjFkOGVjYy01YmJjLTRiZGUtYmE5OC0wZWU5MzIwMTYyMzkiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTc0NzE2MzQ1MCwiZXhwIjoxOTA0OTUxNDUwfQ.9M80GqcUoRWPSCgbjItJ578Gb4zz4ZVVTPfHd1Ydymo';
-
-const createStream = async (token: any) => {
-  const res = await fetch('https://api.videosdk.live/v2/rooms', {
-    method: 'POST',
-    headers: {
-      authorization: `${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({}),
-  });
-  //Destructuring the streamId from the response
-  const {roomId: streamId} = await res.json();
-  return streamId;
-};
-
 function JoinView({initializeStream, setMode}: any) {
   const [streamId, setStreamId] = useState('');
 
@@ -57,7 +40,7 @@ function JoinView({initializeStream, setMode}: any) {
       <TouchableOpacity
         style={styles.button}
         onPress={() => handleAction(Constants.modes.SEND_AND_RECV)}>
-        <Text style={styles.buttonText}>Create Live Stream as Host</Text>
+        <Text style={styles.buttonText}>Create Live Stream as Host.</Text>
       </TouchableOpacity>
       <Text style={styles.separatorText}>---------- OR ----------</Text>
       <TextInput
@@ -89,8 +72,6 @@ function LSContainer({streamId, onLeave}: any) {
     onError: error => Alert.alert('Error', error.message), // Display an alert on encountering an error
   });
 
-  console.log(streamId, '===@@@');
-
   return (
     <View style={styles.container}>
       {joined ? (
@@ -113,8 +94,7 @@ function StreamView() {
     )
     .map(([key]) => key);
 
-
-    console.log(participantsArrId, '===@@@');
+  console.log(participantsArrId, '===@@@');
 
   return (
     <View>
@@ -139,7 +119,7 @@ function StreamView() {
 
 function Participant({participantId}: any) {
   const {webcamStream, webcamOn} = useParticipant(participantId);
-
+  console.log(webcamStream, webcamOn, 'webcamOn ===@@@');
   return webcamOn && webcamStream ? (
     <RTCView
       //@ts-ignore
@@ -212,12 +192,13 @@ function LSControls() {
 
 export const GoLiveTwo = () => {
   const [streamId, setStreamId] = useState(null); // Holds the current stream ID
-  const [mode, setMode] = useState(Constants.modes.SEND_AND_RECV); // Holds the current user mode (Host or Audience)
+  const [mode, setMode] = useState(Constants.modes.CONFERENCE); // Holds the current user mode (Host or Audience)
 
   const initializeStream = async (id: any) => {
     // Creates a new stream if no ID is provided or uses the given stream ID
     const newStreamId = id || (await createStream(token));
     setStreamId(newStreamId);
+    console.log(newStreamId, '===@@@1');
   };
 
   const onStreamLeave = () => setStreamId(null); // Resets the stream state on leave
@@ -275,13 +256,15 @@ const styles = StyleSheet.create({
   },
   noMedia: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    height: 500,
     flexDirection: 'row',
     justifyContent: 'space-around',
     flexWrap: 'wrap',
     backgroundColor: 'gray',
     position: 'absolute',
     zIndex: 9999999,
+    borderWidth: 1,
+    borderColor: 'black',
   },
   noMediaText: {
     fontSize: 16,
