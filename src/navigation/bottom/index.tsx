@@ -6,14 +6,15 @@ import {
 } from '@react-navigation/bottom-tabs';
 import {Image, Text, View, StyleSheet, ImageSourcePropType} from 'react-native';
 
-import {Home} from '../../components/screen/main';
-import {horizontalScale, verticalScale, Width, width} from '../../utils';
+import {Home, Profile} from '../../components/screen/main';
+import {horizontalScale, verticalScale} from '../../utils';
 import {png} from '../../assets/png';
+import {colors} from '../../utils/colors_palette';
 
 type TabParamList = {
   message: undefined;
   home: undefined;
-  account: undefined;
+  profile: undefined;
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -25,7 +26,7 @@ const renderTabIcon = (
   const icons: Record<keyof TabParamList, ImageSourcePropType> = {
     message: png.message,
     home: png.home,
-    account: png.account,
+    profile: png.account,
   };
 
   const iconStyle = focused ? styles.iconFocused : styles.icon;
@@ -38,8 +39,8 @@ const renderTabIcon = (
           styles.tabLabel,
           {
             color: focused
-              ? 'rgba(53, 211, 191, 1)'
-              : ' rgba(255, 255, 255, 0.4)',
+              ? colors.green
+              : colors.lightBlack,
           },
         ]}>
         {routeName}
@@ -71,8 +72,8 @@ export const BottomTab: React.FC = () => {
           options={{headerShown: false}}
         />
         <Tab.Screen
-          name="account"
-          component={Home}
+          name="profile"
+          component={Profile}
           options={{headerShown: false}}
         />
       </Tab.Navigator>
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
   tabBar: {
     width: '100%',
     height: verticalScale(70),
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: colors.backdropOpacity,
     borderRadius: horizontalScale(60),
     paddingTop: verticalScale(20),
     position: 'absolute',

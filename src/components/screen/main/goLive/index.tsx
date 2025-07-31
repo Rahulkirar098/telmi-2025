@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     SafeAreaView,
     TouchableOpacity,
@@ -137,6 +137,14 @@ function MeetingView() {
     const { join, leave, toggleWebcam, toggleMic, participants, localParticipant } = useMeeting({});
     const participantsArrId = [...participants.keys()];
 
+    // Add this useEffect to enable webcam when localParticipant is available
+    useEffect(() => {
+        if (localParticipant && typeof localParticipant.enableWebcam === 'function') {
+            localParticipant.enableWebcam();
+            console.log("Webcam enabled");
+        }
+    }, [localParticipant]);
+
     const requestPermissions = async () => {
         try {
             // Define permissions based on platform
@@ -212,8 +220,7 @@ function MeetingView() {
         try {
             join();
             console.log("Joined meeting");
-            localParticipant.enableWebcam();
-            console.log("Webcam enabled");
+            // Removed direct call to localParticipant.enableWebcam()
         } catch (error) {
             console.error("Error joining meeting:", error);
             Alert.alert(
@@ -241,6 +248,33 @@ export const GoLive = () => {
     const [meetingId, setMeetingId] = useState(null);
 
     let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiJkMjFkOGVjYy01YmJjLTRiZGUtYmE5OC0wZWU5MzIwMTYyMzkiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTc0NzE2MzQ1MCwiZXhwIjoxOTA0OTUxNDUwfQ.9M80GqcUoRWPSCgbjItJ578Gb4zz4ZVVTPfHd1Ydymo";
+
+    // --- Add this useEffect to force permission request on mount ---
+    useEffect(() => {
+        const requestPermissions = async () => {
+            try {
+                const permissions = Platform.select({
+                    ios: [
+                        PERMISSIONS.IOS.CAMERA,
+                        PERMISSIONS.IOS.MICROPHONE
+                    ],
+                    android: [
+                        PERMISSIONS.ANDROID.CAMERA,
+                        PERMISSIONS.ANDROID.RECORD_AUDIO
+                    ]
+                }) || [];
+                await Promise.all(
+                    permissions.map(async (permission) => {
+                        await request(permission);
+                    })
+                );
+            } catch (error) {
+                console.error("Error requesting permissions on mount:", error);
+            }
+        };
+        requestPermissions();
+    }, []);
+    // --- End of useEffect ---
 
 
     const createMeeting = async ({ token }: any) => {

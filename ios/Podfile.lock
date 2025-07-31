@@ -19,7 +19,7 @@ PODS:
   - Firebase/Storage (11.12.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 11.12.0)
-  - FirebaseAppCheckInterop (11.12.0)
+  - FirebaseAppCheckInterop (11.15.0)
   - FirebaseAuth (11.12.0):
     - FirebaseAppCheckInterop (~> 11.0)
     - FirebaseAuthInterop (~> 11.0)
@@ -29,7 +29,7 @@ PODS:
     - GoogleUtilities/Environment (~> 8.0)
     - GTMSessionFetcher/Core (< 5.0, >= 3.4)
     - RecaptchaInterop (~> 101.0)
-  - FirebaseAuthInterop (11.12.0)
+  - FirebaseAuthInterop (11.15.0)
   - FirebaseCore (11.12.0):
     - FirebaseCoreInternal (~> 11.12.0)
     - GoogleUtilities/Environment (~> 8.0)
@@ -58,7 +58,7 @@ PODS:
     - GoogleUtilities/Reachability (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - nanopb (~> 3.30910.0)
-  - FirebaseSharedSwift (11.12.0)
+  - FirebaseSharedSwift (11.15.0)
   - FirebaseStorage (11.12.0):
     - FirebaseAppCheckInterop (~> 11.0)
     - FirebaseAuthInterop (~> 11.0)
@@ -1444,7 +1444,7 @@ PODS:
     - ReactCommon/turbomodule/core
   - react-native-netinfo (11.4.1):
     - React-Core
-  - react-native-safe-area-context (5.3.0):
+  - react-native-safe-area-context (5.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1459,8 +1459,8 @@ PODS:
     - React-hermes
     - React-ImageManager
     - React-jsi
-    - react-native-safe-area-context/common (= 5.3.0)
-    - react-native-safe-area-context/fabric (= 5.3.0)
+    - react-native-safe-area-context/common (= 5.4.0)
+    - react-native-safe-area-context/fabric (= 5.4.0)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1470,7 +1470,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/common (5.3.0):
+  - react-native-safe-area-context/common (5.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1494,7 +1494,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/fabric (5.3.0):
+  - react-native-safe-area-context/fabric (5.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1519,7 +1519,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-video (6.13.0):
+  - react-native-video (6.14.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1534,7 +1534,7 @@ PODS:
     - React-hermes
     - React-ImageManager
     - React-jsi
-    - react-native-video/Video (= 6.13.0)
+    - react-native-video/Video (= 6.14.0)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1544,7 +1544,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-video/Fabric (6.13.0):
+  - react-native-video/Fabric (6.14.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1568,7 +1568,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-video/Video (6.13.0):
+  - react-native-video/Video (6.14.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1593,7 +1593,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-webrtc (0.0.17):
+  - react-native-webrtc (0.0.19):
     - React-Core
     - WebRTC-SDK (~> 125.6422.07)
   - React-NativeModulesApple (0.79.0):
@@ -1921,7 +1921,7 @@ PODS:
   - ReactNativeIncallManager (0.1.3):
     - React-Core
   - RecaptchaInterop (101.0.0)
-  - RNCAsyncStorage (2.1.2):
+  - RNCAsyncStorage (1.24.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1949,26 +1949,50 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNFBApp (22.1.0):
+  - RNFBApp (22.2.0):
     - Firebase/CoreOnly (= 11.12.0)
     - React-Core
-  - RNFBAuth (22.1.0):
+  - RNFBAuth (22.2.0):
     - Firebase/Auth (= 11.12.0)
     - React-Core
     - RNFBApp
-  - RNFBDatabase (22.1.0):
+  - RNFBDatabase (22.2.0):
     - Firebase/Database (= 11.12.0)
     - React-Core
     - RNFBApp
-  - RNFBMessaging (22.1.0):
+  - RNFBMessaging (22.2.0):
     - Firebase/Messaging (= 11.12.0)
     - FirebaseCoreExtension
     - React-Core
     - RNFBApp
-  - RNFBStorage (22.1.0):
+  - RNFBStorage (22.2.0):
     - Firebase/Storage (= 11.12.0)
     - React-Core
     - RNFBApp
+  - RNPermissions (5.4.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNScreens (4.10.0):
     - DoubleConversion
     - glog
@@ -2115,6 +2139,7 @@ DEPENDENCIES:
   - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - SDWebImage
   - SDWebImageWebPCoder
@@ -2313,6 +2338,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNFBStorage:
     :path: "../node_modules/@react-native-firebase/storage"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   Yoga:
@@ -2325,16 +2352,16 @@ SPEC CHECKSUMS:
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 758fbc1be5fb7ce700b23160033d82e574c2b6b7
   Firebase: 735108d2d0b67827cd929bfe8254983907c4479f
-  FirebaseAppCheckInterop: 73b173e5ec45192e2d522ad43f526a82ad10b852
+  FirebaseAppCheckInterop: 06fe5a3799278ae4667e6c432edd86b1030fa3df
   FirebaseAuth: 4ce97ceb271fce2b6cec6c53021930841442b15a
-  FirebaseAuthInterop: b583210c039a60ed3f1e48865e1f3da44a796595
+  FirebaseAuthInterop: 7087d7a4ee4bc4de019b2d0c240974ed5d89e2fd
   FirebaseCore: 9d7a0caf39ec7317fbe13b3c7864c8c2acc60da8
   FirebaseCoreExtension: 5e42645fd3f7c2c59ea5ed7641dd58f02bc565d1
   FirebaseCoreInternal: 480d23e21f699cc7bcbc3d8eaa301f15d1e3ffaf
   FirebaseDatabase: 86ffbda01480ffe070153cee65f1aa3fed87d635
   FirebaseInstallations: 41189d8b11007152d9e46ec844019f38a0a4282a
   FirebaseMessaging: 3a5de79d8dce82b70815123c05dfb8825111f15d
-  FirebaseSharedSwift: d2475748a2d2a36242ed13baa34b2acda846c925
+  FirebaseSharedSwift: e17c654ef1f1a616b0b33054e663ad1035c8fd40
   FirebaseStorage: 2fb852c0ffe18c2af9661b25c41f814b2e8c4b05
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
@@ -2378,9 +2405,9 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 1b42bfae5831d01bcea685f95621b00ce6fdbeb3
   React-microtasksnativemodule: 16daaf4d4722c200c8c16947b35a56a983093c9b
   react-native-netinfo: cec9c4e86083cb5b6aba0e0711f563e2fbbff187
-  react-native-safe-area-context: c65b7154fa406488ff2daa6ba0fa381a7bb5a1a9
-  react-native-video: 0b83d16ccdd5c585fa38ed63a4e3fb8b9fcb9648
-  react-native-webrtc: 98a71c21f0fd46c39af823884527735973c68f06
+  react-native-safe-area-context: 5928d84c879db2f9eb6969ca70e68f58623dbf25
+  react-native-video: f906920a39ad30208bb789bdda7404f510ab422a
+  react-native-webrtc: 6d00d7515be1fb7bb0ef16e17b7fe263a40127b0
   React-NativeModulesApple: 8ecbbc15f14a567821682d37b4b18896b1cc213b
   React-oscompat: faff1df234d57a7368b56e9642222dde9eb9f422
   React-perflogger: 59c434b6ab0741baa4cdc589ba4278889e3fae18
@@ -2414,13 +2441,14 @@ SPEC CHECKSUMS:
   ReactCommon: 4f0e046f6c9abecc017956dbfdbaddd331afa0ea
   ReactNativeIncallManager: c287a44bb2d9758a4f6f6c42be4599f0a0451f04
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
-  RNCAsyncStorage: 646c1bf2ebfc78d6632a3b0399f471fba8101e73
+  RNCAsyncStorage: 7389d6a3f23f10f39b523b68eda4088fa6b5eae9
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
-  RNFBApp: ce7a5efbd91af58a736234a90cb158a3f846be94
-  RNFBAuth: 3bb917b10252363d5e97c1113b20a31acf00f0a2
-  RNFBDatabase: 5807fa661d321e44681dac1bd44786bd2116936c
-  RNFBMessaging: 81c93473bf4242413bd42536ef19056a6714161a
-  RNFBStorage: aeef8895db5778b5fbdae80d46372a7eaf90a13c
+  RNFBApp: 6e738f1d86520e65e7dc4d5a6e7422ff0c908e6a
+  RNFBAuth: 5098e2f5e1341d9c06994ceeb216093edb67c749
+  RNFBDatabase: a2d9d970b4a1fccaf20ee523d7ee6f8eb09ba1d9
+  RNFBMessaging: 0033d4bd56649e3bbf7553d3eb1cd7f2cdcd070d
+  RNFBStorage: 65958ae20aa398d35c246cd2d12b985937d12219
+  RNPermissions: f63fcfbae995da46bc354b49c60bb6c9ddeb9833
   RNScreens: a25b818417609cbd805474dffd2d28b229704cfc
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
@@ -2428,6 +2456,6 @@ SPEC CHECKSUMS:
   WebRTC-SDK: dff00a3892bc570b6014e046297782084071657e
   Yoga: df4e6df930f6d93d6647c10c61d4d6fe5a694805
 
-PODFILE CHECKSUM: 5ebff6fad71ae8975fb22b635589a7c33f29fecd
+PODFILE CHECKSUM: 2febfccb6d92bbe826cbd3cd6ec25627c62f1d8c
 
 COCOAPODS: 1.16.2
