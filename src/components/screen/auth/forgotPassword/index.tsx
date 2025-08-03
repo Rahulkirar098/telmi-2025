@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {View, Image, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 import Video from 'react-native-video';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
@@ -17,20 +24,51 @@ import {CustomButton, CustomInput} from '../../../atoms';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
+// API
+import {auth} from '../../../../api/apiCall';
+// Formik
+import {Formik} from 'formik';
+import {validationSchema} from '../../../../helper/yupSchema';
+// AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // Types
 type RootStackParamList = {
   login: undefined;
   opt_verification: undefined;
 };
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'login', 'opt_verification'>;
+type NavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'login',
+  'opt_verification'
+>;
 
 export const ForgotPassword = () => {
   // Navigation
   const navigation = useNavigation<NavigationProp>();
 
   // State Hooks
-  const [email, setEmail] = useState('');
+
+  const handleForgotPassword = async (values: any) => {
+    if (values.email.length === 0) {
+      Alert.alert('Error', 'Please enter email');
+      return;
+    }
+
+    let body = {
+      email: values.email,
+    };
+    let response = await auth.forgotPassword(body);
+    console.log(response);
+    if (response.status === 200) {
+      await AsyncStorage.setItem('otpEmail', values.email);
+      await AsyncStorage.setItem('isForgot', 'true');
+      navigation.navigate('opt_verification');
+    } else {
+      Alert.alert('Error', response.data.message);
+    }
+  };
 
   // Render
   return (
@@ -51,20 +89,38 @@ export const ForgotPassword = () => {
           {/* Logo */}
           <Image source={png.logo} style={styles.logo} resizeMode="center" />
 
-          {/* Email Input */}
-          <CustomInput
-            label="Email"
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter your email"
-            keyboardType="email-address"
-          />
+          {/* Form */}
+          <Formik
+            initialValues={{
+              email: '',
+            }}
+            validationSchema={validationSchema.forgotPassword}
+            onSubmit={handleForgotPassword}>
+            {({
+              handleChange,
+              handleSubmit,
+              handleBlur,
+              values,
+              touched,
+              errors,
+            }) => (
+              <>
+                {/* Email Input */}
+                <CustomInput
+                  label="Email"
+                  value={values.email}
+                  placeholder="Enter your email"
+                  keyboardType="email-address"
+                  onBlur={() => handleBlur('email')}
+                  onChangeText={handleChange('email')}
+                  error={(touched.email && errors.email) || ''}
+                />
 
-          {/* Login Button */}
-          <CustomButton
-            title="Continue"
-            onPress={() => navigation.navigate('opt_verification')}
-          />
+                {/* Login Button */}
+                <CustomButton title="Continue" onPress={handleSubmit} />
+              </>
+            )}
+          </Formik>
 
           {/* Signup Link */}
           <View style={styles.footerLinks}>

@@ -1593,9 +1593,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-webrtc (0.0.19):
+  - react-native-webrtc (0.0.19-beta.1):
     - React-Core
-    - WebRTC-SDK (~> 125.6422.07)
+    - WebRTC-SDK (= 125.6422.07)
   - React-NativeModulesApple (0.79.0):
     - glog
     - hermes-engine
@@ -2407,7 +2407,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: cec9c4e86083cb5b6aba0e0711f563e2fbbff187
   react-native-safe-area-context: 5928d84c879db2f9eb6969ca70e68f58623dbf25
   react-native-video: f906920a39ad30208bb789bdda7404f510ab422a
-  react-native-webrtc: 6d00d7515be1fb7bb0ef16e17b7fe263a40127b0
+  react-native-webrtc: ca1ffca6cca40995bbfc4128ecdc86f1342cc72d
   React-NativeModulesApple: 8ecbbc15f14a567821682d37b4b18896b1cc213b
   React-oscompat: faff1df234d57a7368b56e9642222dde9eb9f422
   React-perflogger: 59c434b6ab0741baa4cdc589ba4278889e3fae18

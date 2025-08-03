@@ -27,7 +27,7 @@ export const SplashVideoScreen: React.FC = () => {
 
   const handleNavigateToLogin = () => {
     setTimeout(() => {
-      navigation.navigate('bottom_tab');
+      navigation.navigate('login');
     }, 3000);
   };
 
@@ -44,7 +44,7 @@ export const SplashVideoScreen: React.FC = () => {
       let response = await main.getSingleProfile(JSON.stringify({ _id: userId }));
       if (response.data.profile) {
         dispatch(setUser(response.data.profile));
-        handleNavigateToHome();
+        handleNavigateToLogin();
       } else {
         handleNavigateToLogin();
       }

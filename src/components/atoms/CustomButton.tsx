@@ -1,20 +1,32 @@
 import React from 'react';
-import { Text, TouchableOpacity, StyleSheet, GestureResponderEvent } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { colors, horizontalScale, verticalScale } from '../../utils';
+
+// loader
+import { ActivityIndicator } from 'react-native';
 
 interface CustomButtonProps {
   title: string;
   onPress: () => void;
+  isLoading?: boolean;
 }
 
-export const CustomButton: React.FC<CustomButtonProps> = ({ title, onPress }) => {
+export const CustomButton: React.FC<CustomButtonProps> = ({ title, onPress, isLoading }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
       <LinearGradient
         style={styles.gradient}
         colors={[colors.white, colors.green]}>
-        <Text style={styles.text}>{title}</Text>
+        {isLoading ? (
+          <ActivityIndicator
+            size="large"
+            color={colors.black}
+            style={styles.activityIndicator}
+          />
+        ) : (
+          <Text style={styles.text}>{title}</Text>
+        )}
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -36,5 +48,10 @@ const styles = StyleSheet.create({
     fontSize: horizontalScale(18),
     fontWeight: '600',
     color: colors.white,
+  },
+  activityIndicator: {
+    marginLeft: horizontalScale(10),
+    width: horizontalScale(40),
+    height: horizontalScale(40),
   },
 });

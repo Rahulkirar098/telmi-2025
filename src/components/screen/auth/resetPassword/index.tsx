@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Image, StyleSheet} from 'react-native';
+import {View, Image, StyleSheet, Alert} from 'react-native';
 import Video from 'react-native-video';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useNavigation} from '@react-navigation/native';
@@ -31,7 +31,7 @@ export const ResetPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSave = () => {
-    navigation.navigate('login');
+    Alert.alert("error", "Error")
   };
 
   return (

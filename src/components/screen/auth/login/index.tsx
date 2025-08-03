@@ -44,7 +44,8 @@ export const Login = () => {
     let fcmToken = await AsyncStorage.getItem("fcmToken");
     //FCM TOKEN
 
-    let response = await auth.login({ ...values, deviceToken: fcmToken })
+    let response = await auth.login({ ...values, deviceToken: fcmToken });
+
     let userData = response.data.user;
     let token = response.data.jwtToken;
     if (userData) {
@@ -124,10 +125,10 @@ export const Login = () => {
             }
           </Formik>
 
-          {/* Guest Login */}
+          {/* Guest Login
           <TouchableOpacity style={styles.guestButton}>
             <Text style={styles.guestText}>Login As a Guest</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* Signup Link */}
           <View style={styles.footerLinks}>

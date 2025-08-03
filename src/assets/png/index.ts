@@ -35,4 +35,6 @@ export const png = {
   userAdd: require('./userAdd.png'),
   blLike:require('./blLike.png'),
   blView:require('./blView.png'),
+  edit:require('./editIcon.png'),
+
 };

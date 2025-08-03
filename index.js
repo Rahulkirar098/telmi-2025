@@ -9,8 +9,4 @@ import { register } from "@videosdk.live/react-native-sdk";
 
 register();
 
-//
-import {register} from '@videosdk.live/react-native-sdk';
-register();
-
 AppRegistry.registerComponent(appName, () => App);

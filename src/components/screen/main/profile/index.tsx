@@ -6,8 +6,9 @@ import {
   Image,
   FlatList,
   ImageBackground,
+  TouchableOpacity,
 } from 'react-native';
-import { png } from '../../../../assets/png';
+import {png} from '../../../../assets/png';
 import {
   colors,
   height,
@@ -16,23 +17,42 @@ import {
   verticalScale,
   width,
 } from '../../../../utils';
-import { demoImg } from '../../../../assets';
+import {demoImg} from '../../../../assets';
 import FastImage from 'react-native-fast-image';
 
 const highlights = [
-  { id: '1', image: png.account },
-  { id: '2', image: png.account },
-  { id: '3', image: png.account },
-  { id: '4', image: png.account },
-  { id: '5', image: png.account },
-  { id: '6', image: png.account },
+  {id: '1', image: png.account},
+  {id: '2', image: png.account},
+  {id: '3', image: png.account},
+  {id: '4', image: png.account},
+  {id: '5', image: png.account},
+  {id: '6', image: png.account},
 ];
 
 export const Profile = () => {
   return (
     <ImageBackground source={png.bg} style={styles.container}>
       {/* Cover Image */}
-      <Image source={{ uri: demoImg }} style={styles.coverImage} />
+      <View>
+        <Image source={{uri: demoImg}} style={styles.coverImage} />
+        <TouchableOpacity
+          style={{
+            width: horizontalScale(40),
+            height: horizontalScale(40),
+            position: 'absolute',
+            top: horizontalScale(10),
+            right: horizontalScale(10),
+          }}>
+          <Image
+            source={png.edit}
+            resizeMode="center"
+            style={{
+              width: '100%',
+              height: '100%',
+            }}
+          />
+        </TouchableOpacity>
+      </View>
 
       {/* Profile Picture */}
       <View style={styles.profilePicWrapper}>
@@ -54,11 +74,11 @@ export const Profile = () => {
       <FlatList
         data={highlights}
         horizontal
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         contentContainerStyle={styles.highlightsContainer}
         renderItem={() => (
           <View style={styles.highlightCard}>
-            <FastImage source={{ uri: demoImg }} style={styles.highlightImage} />
+            <FastImage source={{uri: demoImg}} style={styles.highlightImage} />
             {/* Play Button Overlay */}
             <View style={styles.playOverlay}>
               <Image source={png.play} style={styles.playIcon} />
@@ -151,7 +171,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: [{ translateX: -40 }, { translateY: -40 }],
+    transform: [{translateX: -40}, {translateY: -40}],
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -7,11 +7,9 @@ export const createStream = async (token: any) => {
       },
       body: JSON.stringify({}),
     });
-    console.log(res, '===@@@');
     
     //Destructuring the streamId from the response
     const {roomId: streamId} = await res.json();
-    console.log(streamId, '===@@@');
-    
+      
     return streamId;
   };
