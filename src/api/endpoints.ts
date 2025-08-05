@@ -7,6 +7,8 @@ export const endpoints = {
     forgotPassword: '/api/forgot-password',
   },
   main: {
-    getSingleProfile: 'api/getSingleProfile',
+    createRoom:"api/rooms/create",
+    getRoomList:"api/rooms/list",
+    getSingleProfile: '/api/getSingleProfile',
   },
 };

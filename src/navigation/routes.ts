@@ -11,7 +11,6 @@ import {
   FriendList,
   InviteFriend,
   Stream,
-  StreamHls,
 } from '../components/screen/main';
 
 import {GoLiveTwo} from "../components/screen/main/goLiveTwo" 
@@ -59,9 +58,5 @@ export const mainNavigation = [
   {
     name: 'stream',
     component: Stream,
-  },
-  {
-    name: 'streamHls',
-    component: StreamHls,
-  },  
+  } 
 ];

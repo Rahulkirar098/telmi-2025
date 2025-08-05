@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, {useEffect} from 'react';
+import {View, StyleSheet} from 'react-native';
 import Video from 'react-native-video';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { main_BG_Video } from '../../../../assets';
-import { main } from '../../../../api/apiCall';
+import {main_BG_Video} from '../../../../assets';
+import {main} from '../../../../api/apiCall';
 
 // Redux
-import { useDispatch } from 'react-redux';
-import { setUser } from '../../../../redux/reducer/users';
+import {useDispatch} from 'react-redux';
+import {setUser} from '../../../../redux/reducer/users';
 
 type RootStackParamList = {
   login: undefined;
@@ -27,24 +27,23 @@ export const SplashVideoScreen: React.FC = () => {
 
   const handleNavigateToLogin = () => {
     setTimeout(() => {
-      navigation.navigate('login');
+      navigation.replace('login');
     }, 3000);
   };
 
   const handleNavigateToHome = () => {
     setTimeout(() => {
-      navigation.navigate('bottom_tab');
+      navigation.replace('bottom_tab');
     }, 3000);
   };
 
   const handleIsAuth = async () => {
     let userId = await AsyncStorage.getItem('userId');
-
     if (userId) {
-      let response = await main.getSingleProfile(JSON.stringify({ _id: userId }));
+      let response = await main.getSingleProfile(JSON.stringify({_id: userId}));
       if (response.data.profile) {
         dispatch(setUser(response.data.profile));
-        handleNavigateToLogin();
+        handleNavigateToHome();
       } else {
         handleNavigateToLogin();
       }

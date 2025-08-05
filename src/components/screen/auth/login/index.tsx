@@ -1,28 +1,36 @@
-import React, { useState } from 'react';
-import { View, Image, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {View, Image, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import Video from 'react-native-video';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 // Assets
-import { main_BG_Video } from '../../../../assets';
-import { png } from '../../../../assets/png';
+import {main_BG_Video} from '../../../../assets';
+import {png} from '../../../../assets/png';
 
 // Utils & Constants
-import { colors, horizontalScale, verticalScale } from '../../../../utils';
+import {colors, horizontalScale, verticalScale} from '../../../../utils';
 
 // Components
-import { CustomButton, CustomInput, IconButton } from '../../../atoms';
+import {CustomButton, CustomInput, IconButton} from '../../../atoms';
 
 // Navigation
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-//
-import { Formik } from 'formik';
-import { validationSchema } from '../../../../helper/yupSchema';
-import { loginType } from '../../../../helper';
-import { auth } from '../../../../api/apiCall';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { Alert } from 'react-native';
+// Formik
+import {Formik} from 'formik';
+// Yup Schema
+import {validationSchema} from '../../../../helper/yupSchema';
+// Login Type
+import {loginType} from '../../../../helper';
+// API
+import {auth} from '../../../../api/apiCall';
+// AsyncStorage
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Redux
+import {setToken, setUser, setUserId} from '../../../../redux/reducer/users';
+import {useDispatch} from 'react-redux';
 
 // Types
 type RootStackParamList = {
@@ -37,21 +45,29 @@ export const Login = () => {
   // Navigation
   const navigation = useNavigation<NavigationProp>();
 
+  // Redux
+  const dispatch = useDispatch();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (values: loginType) => {
     //FCM TOKEN
-    let fcmToken = await AsyncStorage.getItem("fcmToken");
+    let fcmToken = await AsyncStorage.getItem('fcmToken');
     //FCM TOKEN
 
-    let response = await auth.login({ ...values, deviceToken: fcmToken });
+    let response = await auth.login({...values, deviceToken: fcmToken});
 
     let userData = response.data.user;
     let token = response.data.jwtToken;
     if (userData) {
       await AsyncStorage.setItem('token', token);
       await AsyncStorage.setItem('userId', userData._id);
-      navigation.navigate("bottom_tab")
+      dispatch(setToken(token));
+      dispatch(setUser(userData));
+      dispatch(setUserId(userData._id));
+      navigation.replace('bottom_tab');
+    }else{
+      Alert.alert('Error', response.data.message);
     }
   };
 
@@ -71,10 +87,10 @@ export const Login = () => {
         enableOnAndroid
         keyboardShouldPersistTaps="handled">
         <View style={styles.content}>
-          <Image source={png.logo} style={styles.logo} resizeMode="center" />
+          <Image source={png.logo} style={styles.logo} resizeMode="contain" />
 
           <Formik
-            initialValues={{ email: '', password: '' }}
+            initialValues={{email: '', password: ''}}
             validationSchema={validationSchema.login}
             onSubmit={handleLogin}>
             {({
@@ -121,8 +137,7 @@ export const Login = () => {
                 {/* Login Button */}
                 <CustomButton title="Login" onPress={handleSubmit} />
               </>
-            )
-            }
+            )}
           </Formik>
 
           {/* Guest Login

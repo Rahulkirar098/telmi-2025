@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Alert,
   Image,
   ImageBackground,
   ScrollView,
@@ -10,17 +11,28 @@ import {png} from '../../../../assets/png';
 import {height, horizontalScale, verticalScale, width} from '../../../../utils';
 import {CustomButton, Loader} from '../../../atoms';
 import {CategoryList} from '../../../molicues';
-import {requestCameraAndMicPermissions} from '../../../../helper';
+import {checkCameraAndMicPermissions} from '../../../../helper';
 
 //Modal
-import {FriendRequest, WelcomeModal} from '../../../../modal';
+import {WelcomeModal} from '../../../../modal';
+
+import {useNavigation} from '@react-navigation/native';
 
 // Redux
 import {useDispatch, useSelector} from 'react-redux';
-import {setUser} from '../../../../redux/reducer/users';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-// Redux
+import {
+  setCreateRoom,
+  setSelectedRoomAsViewer,
+  setStreamMode,
+} from '../../../../redux/reducer/stream';
+
+///Video SDK
+import {createStream} from '../../../../api/videoSdkApiCall';
+import {token} from '../../../../api/env';
+import {Constants} from '@videosdk.live/react-native-sdk';
+
+// API
+import {main} from '../../../../api/apiCall';
 
 const data: {
   id: 'Sports' | 'Music' | 'Pop Culture' | 'Gaming' | 'TV/Films' | 'Politics';
@@ -39,11 +51,6 @@ type RootStackParamList = {
   navigate: (screen: string) => void;
 };
 
-///Video SDK
-import {createStream} from '../../../../api/videoSdkApiCall';
-import {token} from '../../../../api/env';
-import {Constants} from '@videosdk.live/react-native-sdk';
-
 export const Home = () => {
   //Navigation
   const navigation = useNavigation<RootStackParamList>();
@@ -58,35 +65,75 @@ export const Home = () => {
   // Modal
   const [isWelcome, setIsWelcome] = useState(true);
 
-  const requireUserDataToWatch = () => {
-    return {
-      userId: user._id,
-      profilePhoto: user.profilePhoto,
-      fullName: user.fullName,
-      category: selectedCategory,
-    };
-  };
-
   //GO Live
   const [loader, setLoader] = useState(false);
-  const [streamId, setStreamId] = useState(null);
 
-  const initializeStream = async (id: any) => {
-    const newStreamId = id || (await createStream(token));
-    setStreamId(newStreamId);
-    setLoader(false);
-    console.log(loader, '===@@@3');
+  const initializeStream = async () => {
+    const newStreamId = await createStream(token);
     return newStreamId;
   };
 
   const handleGoLive = async () => {
-    // setLoader(true);
-    // console.log(loader, '===@@@2');
-    // let id = await initializeStream(streamId);
-    // console.log(id, '===@@@1');
+    setLoader(true);
+    if (selectedCategory === 'All') {
+      Alert.alert('Error', 'Please select a category');
+      setLoader(false);
+      return;
+    }
 
-    // // let granted = await requestCameraAndMicPermissions();
-    navigation.navigate('streamHls');
+    const permissionsGranted = await checkCameraAndMicPermissions();
+    if (permissionsGranted) {
+      const newStreamId = await initializeStream();
+      let body = {
+        token: newStreamId,
+        category: selectedCategory,
+      };
+      let response = await main.createRoom(body);
+      console.log('response', response);
+      if (response.status === 201) {
+        dispatch(setStreamMode(Constants.modes.SEND_AND_RECV));
+        dispatch(setCreateRoom(response.data));
+        navigation.navigate('stream');
+        setLoader(false);
+      } else {
+        setLoader(false);
+        Alert.alert('Error', response.data.message);
+      }
+    } else {
+      setLoader(false);
+      Alert.alert('Permissions not granted. Cannot go live.');
+    }
+  };
+
+  const handleWatch = async () => {
+    setLoader(true);
+    if (selectedCategory === 'All') {
+      Alert.alert('Error', 'Please select a category');
+      setLoader(false);
+      return;
+    }
+
+    let response = await main.getRoomList(selectedCategory);
+
+    if (response.status === 200) {
+      let responseData = response.data;
+      let availableRooms = responseData.length;
+
+      if (availableRooms > 0) {
+        const randomIndex = Math.floor(Math.random() * availableRooms);
+        const selectedRoom = responseData[0];
+        dispatch(setStreamMode(Constants.modes.CONFERENCE));
+        dispatch(setSelectedRoomAsViewer(selectedRoom));
+        navigation.navigate('stream');
+        setLoader(false);
+      } else {
+        Alert.alert('No Rooms', 'There are no available rooms at the moment.');
+        setLoader(false);
+      }
+    } else {
+      Alert.alert('Error', response.data.message);
+      setLoader(false);
+    }
   };
 
   return (
@@ -107,10 +154,7 @@ export const Home = () => {
 
           <Image source={png.logo} style={styles.logo} resizeMode="contain" />
 
-          <CustomButton
-            title="WATCH"
-            onPress={() => console.log('Login pressed')}
-          />
+          <CustomButton title="WATCH" onPress={handleWatch} />
           <CustomButton title="GO LIVE" onPress={handleGoLive} />
 
           <View style={{marginVertical: verticalScale(20)}}>
@@ -123,18 +167,11 @@ export const Home = () => {
 
         <Loader visible={loader} />
 
-        {/* <FriendRequest
-          visible={true}
-          userName="John Doe"
-          profileImage="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtNVnSmc1NA1nDSwwGnx0iCVK4n_Vj0TuqlMv0Jbg-zP2uhO8&s"
-          onAccept={() => console.log("Accepted")}
-          onDecline={() => console.log("Declined")}
-        />
         <WelcomeModal
           visible={isWelcome}
           onContinue={() => setIsWelcome(false)}
+          userData={user}
         />
-        */}
       </ImageBackground>
     </View>
   );

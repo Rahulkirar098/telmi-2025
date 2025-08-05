@@ -4,6 +4,8 @@ import {
   Text,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {png} from '../../../../assets/png';
@@ -16,23 +18,78 @@ import {
 } from '../../../../utils';
 import {colors} from '../../../../utils/colors_palette';
 import {demoImg} from '../../../../assets';
+import {Constants, useMeeting} from '@videosdk.live/react-native-sdk';
+import {FriendRequest} from '../../../../modal';
 
-export const Controls = () => {
+export const Controls = ({join, userName, joined, navigation}: any) => {
+  //Invite Friend
+  const [isInvite, setIsInvite] = React.useState(false);
+
+  const {
+    leave,
+    toggleWebcam,
+    toggleMic,
+    getWebcams,
+    changeWebcam,
+    participants,
+  } = useMeeting({});
+
+  const handleGoLive = () => {
+    join();
+  };
+
+  const handleLeave = () => {
+    leave();
+    navigation.goBack();
+  };
+
+  const handleSwitchWebcam = async () => {
+    console.log('handleSwitchWebcam', await getWebcams());
+  };
+
+  let confrenceId = [...participants.values()].filter(participant => {
+    return participant.mode == Constants.modes.CONFERENCE;
+  });
+
+  console.log('confrenceId', confrenceId.length);
+
   return (
     <View style={styles.controls}>
       <View style={styles.iconWrapper}>
         <View style={styles.iconContainer}>
           <FastImage source={{uri: demoImg}} style={styles.icon} />
-          <Text style={styles.iconText}>John Doe</Text>
+          <Text style={styles.iconText}>{userName}</Text>
         </View>
 
         <View style={styles.likesContainer}>
           <View style={styles.likeRow}>
-            <View style={styles.likeBox}>
-              <Text style={styles.likeText}>Like</Text>
-            </View>
+            {joined ? (
+              <View
+                style={{
+                  backgroundColor: colors.red,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  borderRadius: 5,
+                  marginRight: 10,
+                }}>
+                <Text style={styles.likeText}>Live</Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={{
+                  backgroundColor: colors.green,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  borderRadius: 5,
+                  marginRight: 10,
+                }}
+                onPress={handleGoLive}>
+                <Text style={styles.likeText}>Go live</Text>
+              </TouchableOpacity>
+            )}
+
             <View style={styles.likeInfo}>
-              <Text style={styles.likeDistance}>100 m</Text>
+              <Text style={styles.likeDistance}>{confrenceId.length} </Text>
               <FastImage
                 source={png.blView}
                 style={styles.likeIcon}
@@ -40,30 +97,48 @@ export const Controls = () => {
               />
             </View>
           </View>
-          <View style={styles.likeBottomRow}>
-            <Text style={styles.likeDistance}>100 m</Text>
-            <FastImage
-              source={png.blLike}
-              style={styles.likeIcon}
-              resizeMode="contain"
-            />
+          <View style={styles.likeRow}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.green,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                borderRadius: 5,
+                marginRight: 10,
+              }}
+              onPress={handleLeave}>
+              <Text style={styles.likeText}>Leave</Text>
+            </TouchableOpacity>
+
+            <View style={styles.likeInfo}>
+              <Text style={styles.likeDistance}>100 m</Text>
+              <FastImage
+                source={png.blLike}
+                style={styles.likeIcon}
+                resizeMode="contain"
+              />
+            </View>
           </View>
         </View>
       </View>
 
       <View style={styles.bottomContainer}>
-        <View style={styles.actionWrapper}>
+        <TouchableOpacity
+          style={styles.actionWrapper}
+          onPress={() => toggleWebcam()}>
           <FastImage source={png.video} style={styles.iconAction} />
-        </View>
+        </TouchableOpacity>
 
-        <View style={styles.actionWrapper}>
+        <TouchableOpacity
+          style={styles.actionWrapper}
+          onPress={handleSwitchWebcam}>
           <FastImage source={png.userAdd} style={styles.iconAction} />
-        </View>
+        </TouchableOpacity>
 
         <View style={styles.inputRow}>
           <View style={styles.inputWrapper}>
             <TextInput
-              placeholder="Enter your name"
+              placeholder="Enter your Comment"
               style={styles.input}
               placeholderTextColor={colors.white}
             />
@@ -71,6 +146,14 @@ export const Controls = () => {
           <FastImage source={png.like} style={styles.iconAction} />
         </View>
       </View>
+
+      <FriendRequest
+        visible={isInvite}
+        userName="John Doe"
+        profileImage="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtNVnSmc1NA1nDSwwGnx0iCVK4n_Vj0TuqlMv0Jbg-zP2uhO8&s"
+        onAccept={() => Alert.alert('Accepted')}
+        onDecline={() => setIsInvite(false)}
+      />
     </View>
   );
 };
@@ -78,17 +161,17 @@ export const Controls = () => {
 const styles = StyleSheet.create({
   controls: {
     width,
-    height,
+    height: height - 50,
     flexDirection: 'row',
     justifyContent: 'space-around',
     flexWrap: 'wrap',
     backgroundColor: 'transparent',
     position: 'absolute',
+    bottom: 0,
     zIndex: 9999999,
   },
   iconWrapper: {
     width: '100%',
-    marginVertical: platform === 'ios' ? '0%' : '10%',
     paddingHorizontal: horizontalScale(20),
     paddingVertical: verticalScale(5),
     flexDirection: 'row',
@@ -104,7 +187,7 @@ const styles = StyleSheet.create({
     width: horizontalScale(50),
     height: horizontalScale(50),
     borderWidth: 1,
-    borderColor: colors.black,
+    borderColor: colors.green,
   },
   iconText: {
     color: colors.green,
@@ -152,7 +235,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     width: '100%',
     position: 'absolute',
-    bottom: platform === 'ios' ? '10%' : '6%',
+    bottom: platform === 'ios' ? '5%' : '2.5%',
   },
   actionWrapper: {
     marginVertical: 5,

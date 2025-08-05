@@ -1,5 +1,3 @@
-import { request } from "react-native-permissions";
-
 export const png = {
   logo: require('./logo.png'),
   eye: require('./eye.png'),

@@ -1,9 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Image,
   FlatList,
   ImageBackground,
   TouchableOpacity,
@@ -19,6 +18,18 @@ import {
 } from '../../../../utils';
 import {demoImg} from '../../../../assets';
 import FastImage from 'react-native-fast-image';
+// Redux
+import {main} from '../../../../api/apiCall';
+//
+import {setUser} from '../../../../redux/reducer/users';
+import {useDispatch, useSelector} from 'react-redux';
+// Navigation
+import {useNavigation} from '@react-navigation/native';
+
+// Types
+type RootStackParamList = {
+  navigate: (screen: string) => void;
+};
 
 const highlights = [
   {id: '1', image: png.account},
@@ -30,22 +41,50 @@ const highlights = [
 ];
 
 export const Profile = () => {
+  // Redux
+  const {token, user, userId} = useSelector(
+    (state: any) => state.userAuthReducer,
+  );
+  const dispatch = useDispatch();
+  //Navigation
+  const navigation = useNavigation<RootStackParamList>();
+
+  const handleIsAuth = async () => {
+    if (userId) {
+      let response = await main.getSingleProfile({
+        _id: '678bdedf37fe709646713ff7',
+      });
+      if (response.data.profile) {
+        dispatch(setUser(response.data.profile));
+        console.log(response.data.profile, '===@@@');
+      } else {
+        navigation.navigate('bottom_tab');
+      }
+    } else {
+      console.log('No user id found', '===@@@');
+    }
+  };
+
+  useEffect(() => {
+    handleIsAuth();
+  }, []);
+
   return (
     <ImageBackground source={png.bg} style={styles.container}>
       {/* Cover Image */}
       <View>
-        <Image source={{uri: demoImg}} style={styles.coverImage} />
+        <FastImage source={{uri: user?.coverPhoto}} style={styles.coverImage} />
         <TouchableOpacity
+          onPress={() => navigation.navigate('editProfile')}
           style={{
-            width: horizontalScale(40),
-            height: horizontalScale(40),
+            width: horizontalScale(20),
+            height: horizontalScale(20),
             position: 'absolute',
             top: horizontalScale(10),
             right: horizontalScale(10),
           }}>
-          <Image
+          <FastImage
             source={png.edit}
-            resizeMode="center"
             style={{
               width: '100%',
               height: '100%',
@@ -56,17 +95,20 @@ export const Profile = () => {
 
       {/* Profile Picture */}
       <View style={styles.profilePicWrapper}>
-        <Image source={png.account} style={styles.profilePic} />
+        <FastImage
+          source={{uri: user?.profilePhoto}}
+          style={styles.profilePic}
+        />
       </View>
 
       {/* User Info */}
       <View style={styles.infoSection}>
-        <Text style={styles.userName}>User Name</Text>
+        <Text style={styles.userName}>{user?.fullName}</Text>
         <View style={styles.row}>
-          <Image source={png.account} style={styles.icon} />
+          <FastImage source={png.account} style={styles.icon} />
           <Text style={styles.followerText}>150</Text>
         </View>
-        <Text style={styles.email}>Abc123@example.com</Text>
+        <Text style={styles.email}>{user?.email}</Text>
       </View>
 
       {/* Highlights Section */}
@@ -81,7 +123,7 @@ export const Profile = () => {
             <FastImage source={{uri: demoImg}} style={styles.highlightImage} />
             {/* Play Button Overlay */}
             <View style={styles.playOverlay}>
-              <Image source={png.play} style={styles.playIcon} />
+              <FastImage source={png.play} style={styles.playIcon} />
             </View>
           </View>
         )}

@@ -66,11 +66,15 @@ function JoinView({initializeStream, setMode}: any) {
 function LSContainer({streamId, onLeave}: any) {
   const [joined, setJoined] = useState(false); // Track if the user has joined the stream
 
-  const {join} = useMeeting({
+  const {join, meeting} = useMeeting({
     onMeetingJoined: () => setJoined(true), // Set `joined` to true when successfully joined
     onMeetingLeft: onLeave, // Handle the leave stream event
     onError: error => Alert.alert('Error', error.message), // Display an alert on encountering an error
   });
+
+  const currentMode = meeting.localParticipant.mode; // Get the current participant's mode
+
+  console.log(currentMode, meeting,'currentMode ===@@@');
 
   return (
     <View style={styles.container}>

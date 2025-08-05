@@ -6,10 +6,13 @@ import {
 } from '@react-navigation/bottom-tabs';
 import {Image, Text, View, StyleSheet, ImageSourcePropType} from 'react-native';
 
-import {Home, Profile} from '../../components/screen/main';
+import {Home} from '../../components/screen/main';
 import {horizontalScale, verticalScale} from '../../utils';
 import {png} from '../../assets/png';
 import {colors} from '../../utils/colors_palette';
+
+//Bottom stack
+import {ProfileNavigation} from "./profileStack"
 
 type TabParamList = {
   message: undefined;
@@ -73,7 +76,7 @@ export const BottomTab: React.FC = () => {
         />
         <Tab.Screen
           name="profile"
-          component={Profile}
+          component={ProfileNavigation}
           options={{headerShown: false}}
         />
       </Tab.Navigator>
