@@ -54,19 +54,20 @@ const Participant = ({
         flex: 1,
         alignItems: 'center',
       }}
+      mirror={true}
     />
   ) : (
     <View
       style={[
         styles.noMedia,
-        {width: '100%', height: newHeight, backgroundColor: 'red'},
+        {width: '100%', height: newHeight},
       ]}>
       <Text style={styles.noMediaText}>NO MEDIA</Text>
     </View>
   );
 };
 
-export const StreamView = ({join, userName, joined, navigation}: any) => {
+export const StreamView = ({userName, navigation}: any) => {
   const {participants} = useMeeting();
   const participantsArrId = Array.from(participants.entries())
     .filter(
@@ -97,12 +98,7 @@ export const StreamView = ({join, userName, joined, navigation}: any) => {
         }}
         keyExtractor={(_: any, index: number) => index.toString()}
       />
-      <Controls
-        join={join}
-        userName={userName}
-        joined={joined}
-        navigation={navigation}
-      />
+      <Controls userName={userName} navigation={navigation} />
     </View>
   );
 };

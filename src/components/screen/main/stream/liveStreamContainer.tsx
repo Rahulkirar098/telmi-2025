@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, Alert} from 'react-native';
+import {View, StyleSheet, Alert, Text, TouchableOpacity} from 'react-native';
 import {StreamView} from './streamView';
 import {useMeeting} from '@videosdk.live/react-native-sdk';
+import {colors} from '../../../../utils';
 
 export const LiveStreamContainer = ({userData, navigation}: any) => {
   const [joined, setJoined] = useState(false);
@@ -21,16 +22,33 @@ export const LiveStreamContainer = ({userData, navigation}: any) => {
 
   return (
     <View style={styles.container}>
-      <StreamView
-        userName={userData.fullName}
-        joined={joined}
-        navigation={navigation} />
+      {joined ? (
+        <StreamView userName={userData.fullName} navigation={navigation} />
+      ) : (
+        <View style={styles.joinContainer}>
+          <Text>Hello {userData.fullName}</Text>
+          <TouchableOpacity onPress={join} style={styles.joinButton}>
+            <Text>Join Stream</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
-};  
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  joinContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  joinButton: {
+    backgroundColor: colors.green,
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
   },
 });

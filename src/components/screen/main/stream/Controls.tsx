@@ -21,7 +21,7 @@ import {demoImg} from '../../../../assets';
 import {Constants, useMeeting} from '@videosdk.live/react-native-sdk';
 import {FriendRequest} from '../../../../modal';
 
-export const Controls = ({join, userName, joined, navigation}: any) => {
+export const Controls = ({userName, navigation}: any) => {
   //Invite Friend
   const [isInvite, setIsInvite] = React.useState(false);
 
@@ -33,10 +33,6 @@ export const Controls = ({join, userName, joined, navigation}: any) => {
     changeWebcam,
     participants,
   } = useMeeting({});
-
-  const handleGoLive = () => {
-    join();
-  };
 
   const handleLeave = () => {
     leave();
@@ -63,30 +59,16 @@ export const Controls = ({join, userName, joined, navigation}: any) => {
 
         <View style={styles.likesContainer}>
           <View style={styles.likeRow}>
-            {joined ? (
-              <View
-                style={{
-                  backgroundColor: colors.red,
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                  borderRadius: 5,
-                  marginRight: 10,
-                }}>
-                <Text style={styles.likeText}>Live</Text>
-              </View>
-            ) : (
-              <TouchableOpacity
-                style={{
-                  backgroundColor: colors.green,
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                  borderRadius: 5,
-                  marginRight: 10,
-                }}
-                onPress={handleGoLive}>
-                <Text style={styles.likeText}>Go live</Text>
-              </TouchableOpacity>
-            )}
+            <View
+              style={{
+                backgroundColor: colors.red,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                borderRadius: 5,
+                marginRight: 10,
+              }}>
+              <Text style={styles.likeText}>Live</Text>
+            </View>
 
             <View style={styles.likeInfo}>
               <Text style={styles.likeDistance}>{confrenceId.length} </Text>
@@ -201,6 +183,7 @@ const styles = StyleSheet.create({
   likeRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.red,
   },
   likeBox: {
     backgroundColor: colors.red,
