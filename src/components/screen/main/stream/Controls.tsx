@@ -52,12 +52,14 @@ export const Controls = ({userName, navigation}: any) => {
   return (
     <View style={styles.controls}>
       <View style={styles.iconWrapper}>
+        
         <View style={styles.iconContainer}>
           <FastImage source={{uri: demoImg}} style={styles.icon} />
           <Text style={styles.iconText}>{userName}</Text>
         </View>
 
         <View style={styles.likesContainer}>
+
           <View style={styles.likeRow}>
             <View
               style={{
@@ -66,6 +68,8 @@ export const Controls = ({userName, navigation}: any) => {
                 paddingVertical: 5,
                 borderRadius: 5,
                 marginRight: 10,
+                borderWidth:1,
+                borderColor:colors.white
               }}>
               <Text style={styles.likeText}>Live</Text>
             </View>
@@ -161,6 +165,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   iconContainer: {
+    width:"50%",
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -178,12 +183,12 @@ const styles = StyleSheet.create({
     marginLeft: horizontalScale(10),
   },
   likesContainer: {
+    width:"50%",
     padding: 5,
+    alignItems: 'flex-end',
   },
   likeRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.red,
   },
   likeBox: {
     backgroundColor: colors.red,

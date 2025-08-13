@@ -42,9 +42,7 @@ const highlights = [
 
 export const Profile = () => {
   // Redux
-  const {token, user, userId} = useSelector(
-    (state: any) => state.userAuthReducer,
-  );
+  const {user, userId} = useSelector((state: any) => state.userAuthReducer);
   const dispatch = useDispatch();
   //Navigation
   const navigation = useNavigation<RootStackParamList>();
@@ -52,7 +50,7 @@ export const Profile = () => {
   const handleIsAuth = async () => {
     if (userId) {
       let response = await main.getSingleProfile({
-        _id: '678bdedf37fe709646713ff7',
+        _id: userId,
       });
       if (response.data.profile) {
         dispatch(setUser(response.data.profile));

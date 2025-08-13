@@ -11,6 +11,8 @@ import {horizontalScale, verticalScale} from '../../utils';
 import {png} from '../../assets/png';
 import {colors} from '../../utils/colors_palette';
 
+import { UserListScreen} from "../../components/screen/main/chat" 
+
 //Bottom stack
 import {ProfileNavigation} from "./profileStack"
 
@@ -66,7 +68,7 @@ export const BottomTab: React.FC = () => {
         })}>
         <Tab.Screen
           name="message"
-          component={Home}
+          component={UserListScreen}
           options={{headerShown: false}}
         />
         <Tab.Screen

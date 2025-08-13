@@ -15,6 +15,8 @@ import {
 
 import {GoLiveTwo} from "../components/screen/main/goLiveTwo" 
 
+import { MessagingScreen} from "../components/screen/main/chat" 
+
 export const auhtNavigation = [
   {
     name: 'splash',
@@ -58,5 +60,9 @@ export const mainNavigation = [
   {
     name: 'stream',
     component: Stream,
-  } 
+  }, 
+  {
+    name: 'messaging',
+    component: MessagingScreen,
+  },
 ];

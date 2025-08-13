@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { auhtNavigation, mainNavigation } from '../routes';
 import { BottomTab } from '../bottom';
 
+
 const NavigateStack = createNativeStackNavigator();
 
 export const StackNavigation = () => {
