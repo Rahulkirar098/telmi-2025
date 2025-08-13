@@ -1,80 +1,132 @@
-// MessagingScreen.tsx
 import React, {useEffect, useState} from 'react';
 import {
   View,
-  Text,
-  FlatList,
   TextInput,
   Button,
+  FlatList,
+  Text,
   StyleSheet,
+  ImageBackground,
 } from 'react-native';
-import {useRoute} from '@react-navigation/native';
-import {listenForMessages, sendMessage} from './firebaseChat';
+import database from '@react-native-firebase/database';
+import {png} from '../../../../assets/png';
+import {
+  width,
+  height,
+  colors,
+  horizontalScale,
+  platform,
+} from '../../../../utils';
 
-// Types
-type RootStackParamList = {
-  navigate: (screen: string) => void;
-};
-
-export const MessagingScreen = () => {
-  const route = useRoute<any>();
-  const currentUserId = '64d123456abc'; // Replace with backend user ID
-  const {otherUserId} = route.params;
-
+export const MessagingScreen = ({route}: any) => {
+  const {chatId, currentUserID, otherUserID} = route.params;
   const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState('');
 
   useEffect(() => {
-    const unsubscribe = listenForMessages(
-      currentUserId,
-      otherUserId,
-      setMessages,
-    );
-    return unsubscribe;
-  }, []);
+    const ref = database().ref(`messages/${chatId}`);
+
+    const listener = ref.on('value', snapshot => {
+      const data = snapshot.val() || {};
+      const list = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key],
+      }));
+      setMessages(list.sort((a, b) => a.timestamp - b.timestamp));
+    });
+
+    return () => ref.off('value', listener);
+  }, [chatId]);
+
+  const sendMessage = async () => {
+    if (!text.trim()) {
+      return;
+    }
+
+    const messageData = {
+      senderId: currentUserID,
+      text,
+      timestamp: Date.now(),
+    };
+
+    await database().ref(`messages/${chatId}`).push(messageData);
+
+    // Update last message in userChats
+    await database().ref(`userChats/${currentUserID}/${otherUserID}`).update({
+      lastMessage: text,
+      timestamp: Date.now(),
+    });
+
+    await database().ref(`userChats/${otherUserID}/${currentUserID}`).update({
+      lastMessage: text,
+      timestamp: Date.now(),
+    });
+
+    setText('');
+  };
 
   return (
-    <View style={{flex: 1, padding: 10}}>
-      <FlatList
-        data={messages}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => {
-          const isMe = item.senderId === currentUserId;
-          return (
-            <View style={{marginVertical: 5}}>
-              <Text style={{color: isMe ? 'blue' : 'green'}}>
-                {isMe ? 'Me' : otherUserId}: {item.text}
-              </Text>
-            </View>
-          );
-        }}
-      />
-      <TextInput
-        value={text}
-        onChangeText={setText}
-        placeholder="Type a message"
+    <View style={{flex: 1}}>
+      <ImageBackground
+        source={png.bg}
         style={{
-          borderWidth: 1,
-          borderColor: '#ccc',
-          padding: 10,
-          marginVertical: 10,
-          borderRadius: 5,
-        }}
-      />
-      <Button
-        title="Send"
-        onPress={() => {
-          sendMessage(currentUserId, otherUserId, text);
-          setText('');
-        }}
-      />
+          width,
+          height,
+          padding: horizontalScale(20),
+          paddingTop: platform == 'ios' ? '15%' : '10%',
+        }}>
+        <FlatList
+          data={messages}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => {
+            const isSender = item.senderId === currentUserID;
+            return (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: isSender ? 'flex-end' : 'flex-start',
+                  marginVertical: 4,
+                  paddingHorizontal: 10,
+                }}>
+                <View
+                  style={{
+                    backgroundColor: isSender ? colors.red : colors.green,
+                    padding: 10,
+                    borderRadius: 10,
+                    maxWidth: '70%',
+                  }}>
+                  <Text>{item.text}</Text>
+                </View>
+              </View>
+            );
+          }}
+        />
+
+        <View
+          style={{flexDirection: 'row', borderWidth: 1, borderColor: '#ccc'}}>
+          <TextInput
+            value={text}
+            onChangeText={setText}
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              borderColor: '#ccc',
+              padding: 10,
+              color: colors.white,
+            }}
+            placeholderTextColor={colors.white}
+            placeholder="Type a message..."
+          />
+          <Button title="Send" onPress={sendMessage} />
+        </View>
+      </ImageBackground>
     </View>
   );
 };
 
 // ===== Styles =====
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#fff'},
+  container: {flex: 1},
   bubbleRow: {flexDirection: 'row', paddingHorizontal: 10, marginVertical: 4},
   left: {justifyContent: 'flex-start'},
   right: {justifyContent: 'flex-end'},

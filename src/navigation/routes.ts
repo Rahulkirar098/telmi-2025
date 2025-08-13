@@ -62,7 +62,7 @@ export const mainNavigation = [
     component: Stream,
   }, 
   {
-    name: 'messaging',
+    name: 'MessagingScreen',
     component: MessagingScreen,
   },
 ];

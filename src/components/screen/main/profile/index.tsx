@@ -25,10 +25,11 @@ import {setUser} from '../../../../redux/reducer/users';
 import {useDispatch, useSelector} from 'react-redux';
 // Navigation
 import {useNavigation} from '@react-navigation/native';
+import {createChatIfNotExists} from '../chat/firebaseChat';
 
 // Types
 type RootStackParamList = {
-  navigate: (screen: string) => void;
+  navigate: (screen: string, params?: any) => void;
 };
 
 const highlights = [
@@ -66,6 +67,28 @@ export const Profile = () => {
   useEffect(() => {
     handleIsAuth();
   }, []);
+
+  let otherUserID =
+    userId == '688f957ce46b44ecdc0e5a36'
+      ? '678bdedf37fe709646713ff7'
+      : '688f957ce46b44ecdc0e5a36';
+  let currentUserID = userId;
+
+  const handleStartChat = async () => {
+    const chatId = await createChatIfNotExists(
+      currentUserID,
+      user?.fullName,
+      user?.profilePhoto,
+      otherUserID,
+      'rahulkirar',
+      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80',
+    );
+    navigation.navigate('MessagingScreen', {
+      chatId,
+      currentUserID,
+      otherUserID,
+    });
+  };
 
   return (
     <ImageBackground source={png.bg} style={styles.container}>
@@ -107,6 +130,14 @@ export const Profile = () => {
           <Text style={styles.followerText}>150</Text>
         </View>
         <Text style={styles.email}>{user?.email}</Text>
+      </View>
+
+      <View style={styles.infoSection}>
+        <TouchableOpacity
+          style={{backgroundColor: 'red'}}
+          onPress={handleStartChat}>
+          <Text>Send Message</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Highlights Section */}

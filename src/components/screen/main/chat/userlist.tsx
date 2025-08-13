@@ -7,11 +7,21 @@ import {
   FlatList,
   StyleSheet,
   ImageBackground,
+  Image,
+  TextInput,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {listenForChatList} from './firebaseChat';
 import {png} from '../../../../assets/png';
-import {width, height, colors} from '../../../../utils';
+import {
+  width,
+  height,
+  colors,
+  horizontalScale,
+  platform,
+  verticalScale,
+} from '../../../../utils';
+import {useSelector} from 'react-redux';
 
 // Types
 type RootStackParamList = {
@@ -19,49 +29,110 @@ type RootStackParamList = {
 };
 
 export const UserListScreen = () => {
-  const currentUserId = '64d123456abc'; // Replace with your backend user ID
+  const {userId} = useSelector((state: any) => state.userAuthReducer);
+  const currentUserId = userId;
   const navigation = useNavigation<RootStackParamList>();
-  const [chatList, setChatList] = useState<any[]>([]);
 
+  const [chatList, setChatList] = useState<any[]>([]);
+  const [filteredList, setFilteredList] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Fetch chats
   useEffect(() => {
-    const unsubscribe = listenForChatList(currentUserId, setChatList);
+    const unsubscribe = listenForChatList(currentUserId, data => {
+      setChatList(data);
+      setFilteredList(data); // default full list
+    });
     return unsubscribe;
   }, []);
+
+  // Search handler
+  const handleSearch = (text: string) => {
+    setSearchQuery(text);
+    if (!text.trim()) {
+      setFilteredList(chatList);
+    } else {
+      const filtered = chatList.filter(item =>
+        item.userName?.toLowerCase().includes(text.toLowerCase()),
+      );
+      setFilteredList(filtered);
+    }
+  };
 
   return (
     <View style={{flex: 1}}>
       <ImageBackground source={png.bg} style={{width, height}}>
-        {chatList.length === 0 ? (
-          <View style={styles.center}>
-            <Text style={{fontSize: 16, color: colors.white}}>
-              No users found
-            </Text>
-          </View>
-        ) : (
-          <FlatList
-            data={chatList}
-            keyExtractor={item => item.userId}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('MessagingScreen', {
-                    otherUserId: item.userId,
-                  })
-                }
-                style={styles.row}>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarText}>
-                    {item.userId.charAt(0).toUpperCase()}
-                  </Text>
-                </View>
-                <View style={styles.rowCenter}>
-                  <Text style={styles.name}>{item.userId}</Text>
-                  <Text style={styles.preview}>{item.lastMessage}</Text>
-                </View>
-              </TouchableOpacity>
-            )}
+        <View style={styles.container}>
+          {/* Search bar always visible */}
+          <TextInput
+            placeholder="Search User"
+            placeholderTextColor={colors.white}
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={handleSearch}
           />
-        )}
+
+          {/* Case 1: Database empty */}
+          {chatList.length === 0 ? (
+            <View style={styles.center}>
+              <Text style={styles.noUserText}>No users found</Text>
+            </View>
+          ) : /* Case 2: Search has no matches */
+          filteredList.length === 0 ? (
+            <View style={styles.center}>
+              <Text style={styles.noResultText}>
+                No results for "{searchQuery}"
+              </Text>
+            </View>
+          ) : (
+            /* Case 3: Show filtered list */
+            <FlatList
+              data={filteredList}
+              keyExtractor={item => item.userId}
+              renderItem={({item}) => {
+                const firstLetter =
+                  item.userName?.charAt(0).toUpperCase() || '?';
+                const profileUri = item.userProfile;
+
+                return (
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('MessagingScreen', {
+                        chatId: item.chatId,
+                        currentUserID: userId,
+                        otherUserID: item.userId,
+                      })
+                    }
+                    style={styles.row}>
+                    {/* Avatar */}
+                    {profileUri ? (
+                      <Image
+                        source={{uri: profileUri}}
+                        style={styles.avatarImage}
+                      />
+                    ) : (
+                      <View style={styles.avatarFallback}>
+                        <Text style={styles.avatarFallbackText}>
+                          {firstLetter}
+                        </Text>
+                      </View>
+                    )}
+
+                    {/* User Info */}
+                    <View style={styles.rowCenter}>
+                      <Text style={styles.name}>
+                        {item.userName || 'Unknown User'}
+                      </Text>
+                      <Text style={styles.preview} numberOfLines={1}>
+                        {item.lastMessage || 'No messages yet'}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              }}
+            />
+          )}
+        </View>
       </ImageBackground>
     </View>
   );
@@ -69,37 +140,73 @@ export const UserListScreen = () => {
 
 // ===== Styles =====
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#fff', padding: 20},
-  center: {flex: 1, alignItems: 'center', justifyContent: 'center'},
-  separator: {height: 1, backgroundColor: '#eee', marginLeft: 72},
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+  container: {
+    flex: 1,
+    paddingHorizontal: horizontalScale(16),
+    paddingTop: platform == 'ios' ? '15%' : '10%',
   },
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#e5e7eb',
+  center: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    alignItems: 'center',
+  },
+  avatarImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    marginRight: 12,
+    backgroundColor: '#ccc',
+  },
+  avatarFallback: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#4b5563',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 12,
   },
-  avatarText: {fontWeight: '700', fontSize: 18, color: '#374151'},
-  rowCenter: {flex: 1},
-  name: {fontSize: 16, fontWeight: '600', color: '#111827'},
-  preview: {fontSize: 13, color: '#6b7280', marginTop: 2},
-  rowRight: {alignItems: 'flex-end', marginLeft: 8},
-  time: {fontSize: 11, color: '#9ca3af'},
-  badge: {
-    marginTop: 6,
-    backgroundColor: '#111827',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 10,
+  avatarFallbackText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
-  badgeText: {color: '#fff', fontSize: 11, fontWeight: '700'},
+  rowCenter: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.white,
+  },
+  preview: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginTop: 2,
+  },
+  searchInput: {
+    height: verticalScale(50),
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: horizontalScale(15),
+    paddingHorizontal: horizontalScale(16),
+    marginBottom: verticalScale(12),
+    color: colors.white,
+  },
+  noUserText: {
+    fontSize: 16,
+    color: colors.white,
+  },
+  noResultText: {
+    fontSize: 16,
+    color: '#FFD700', // gold/yellow for visibility
+  },
 });
