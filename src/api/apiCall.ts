@@ -26,6 +26,9 @@ export const main = {
   createRoom: (body: any) => {
     return instance.post(endpoints.main.createRoom, body);
   },
+  joinRoom: (body: any) => {
+    return instance.post(endpoints.main.joinRoom, body);
+  },
   getRoomList: (category: string) => {
     return instance.get(
       `${endpoints.main.getRoomList}?category=${category}&limit=10&offset=0`,

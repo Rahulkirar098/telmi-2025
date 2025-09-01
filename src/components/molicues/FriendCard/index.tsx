@@ -31,10 +31,10 @@ export const FriendCard: React.FC<FriendCardProps> = ({
       <Text style={styles.name}>{name}</Text>
       <View style={styles.buttonRow}>
         <TouchableOpacity style={styles.iconButton} onPress={onRemove}>
-          <FastImage source={{ uri: actionUri }} style={{ width: 20, height: 20 }} />
+          <FastImage source={actionUri} style={{ width: 20, height: 20 }} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton} onPress={onMessage}>
-          <FastImage source={{ uri: messageUri }} style={{ width: 20, height: 20 }} />
+          <FastImage source={messageUri} style={{ width: 20, height: 20 }} />
         </TouchableOpacity>
       </View>
     </View>

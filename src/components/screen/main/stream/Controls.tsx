@@ -19,11 +19,14 @@ import {
 import {colors} from '../../../../utils/colors_palette';
 import {demoImg} from '../../../../assets';
 import {Constants, useMeeting} from '@videosdk.live/react-native-sdk';
-import {FriendRequest} from '../../../../modal';
+import {FriendRequest, FriendList} from '../../../../modal';
 
 export const Controls = ({userName, navigation}: any) => {
   //Invite Friend
   const [isInvite, setIsInvite] = React.useState(false);
+
+  // Friend List
+  const [isFriendListOpen, setIsFriendListOpen] = React.useState(false);
 
   const {
     leave,
@@ -32,6 +35,7 @@ export const Controls = ({userName, navigation}: any) => {
     getWebcams,
     changeWebcam,
     participants,
+    meeting,
   } = useMeeting({});
 
   const handleLeave = () => {
@@ -47,19 +51,20 @@ export const Controls = ({userName, navigation}: any) => {
     return participant.mode == Constants.modes.CONFERENCE;
   });
 
-  console.log('confrenceId', confrenceId.length);
+  const handleWatcher = () => {
+    console.log('confrenceId', confrenceId);
+    setIsFriendListOpen(true);
+  };
 
   return (
     <View style={styles.controls}>
       <View style={styles.iconWrapper}>
-        
         <View style={styles.iconContainer}>
           <FastImage source={{uri: demoImg}} style={styles.icon} />
           <Text style={styles.iconText}>{userName}</Text>
         </View>
 
         <View style={styles.likesContainer}>
-
           <View style={styles.likeRow}>
             <View
               style={{
@@ -68,19 +73,21 @@ export const Controls = ({userName, navigation}: any) => {
                 paddingVertical: 5,
                 borderRadius: 5,
                 marginRight: 10,
-                borderWidth:1,
-                borderColor:colors.white
+                borderWidth: 1,
+                borderColor: colors.white,
               }}>
               <Text style={styles.likeText}>Live</Text>
             </View>
 
             <View style={styles.likeInfo}>
               <Text style={styles.likeDistance}>{confrenceId.length} </Text>
-              <FastImage
-                source={png.blView}
-                style={styles.likeIcon}
-                resizeMode="contain"
-              />
+              <TouchableOpacity onPress={handleWatcher}>
+                <FastImage
+                  source={png.blView}
+                  style={styles.likeIcon}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
             </View>
           </View>
           <View style={styles.likeRow}>
@@ -140,6 +147,11 @@ export const Controls = ({userName, navigation}: any) => {
         onAccept={() => Alert.alert('Accepted')}
         onDecline={() => setIsInvite(false)}
       />
+     {isFriendListOpen && <FriendList
+        participants={confrenceId}
+        open={isFriendListOpen}
+        onClose={() => setIsFriendListOpen(false)}
+      />}
     </View>
   );
 };
@@ -165,7 +177,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   iconContainer: {
-    width:"50%",
+    width: '50%',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -183,7 +195,7 @@ const styles = StyleSheet.create({
     marginLeft: horizontalScale(10),
   },
   likesContainer: {
-    width:"50%",
+    width: '50%',
     padding: 5,
     alignItems: 'flex-end',
   },

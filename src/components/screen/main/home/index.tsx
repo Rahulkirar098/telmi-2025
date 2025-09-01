@@ -124,8 +124,20 @@ export const Home = () => {
         const selectedRoom = responseData[0];
         dispatch(setStreamMode(Constants.modes.CONFERENCE));
         dispatch(setSelectedRoomAsViewer(selectedRoom));
-        navigation.navigate('stream');
-        setLoader(false);
+
+        let joinBody = {
+          token: selectedRoom.token,
+          activityType: 'viewer',
+        };
+        let joinResponse = await main.joinRoom(joinBody);
+
+        if (joinResponse.data.message === 'Joined room successfully') {
+          navigation.navigate('stream');
+          setLoader(false);
+        } else {
+          Alert.alert('Error', joinResponse.data.message);
+          setLoader(false);
+        }
       } else {
         Alert.alert('No Rooms', 'There are no available rooms at the moment.');
         setLoader(false);

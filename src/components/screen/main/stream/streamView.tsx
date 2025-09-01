@@ -22,8 +22,10 @@ const Participant = ({
   participantId: string;
   count: number;
 }) => {
-  const {webcamStream, webcamOn} = useParticipant(participantId);
+  // @ts-ignore
+  const {webcamStream, webcamOn, metaData} = useParticipant(participantId);
 
+  // console.log('metaData', metaData, '===@@@');
   let newHeight;
 
   switch (count) {
@@ -57,11 +59,7 @@ const Participant = ({
       mirror={true}
     />
   ) : (
-    <View
-      style={[
-        styles.noMedia,
-        {width: '100%', height: newHeight},
-      ]}>
+    <View style={[styles.noMedia, {width: '100%', height: newHeight}]}>
       <Text style={styles.noMediaText}>NO MEDIA</Text>
     </View>
   );
@@ -75,7 +73,7 @@ export const StreamView = ({userName, navigation}: any) => {
     )
     .map(([key]) => key);
 
-  console.log('participantsArrId', participantsArrId, '===@@@');
+  // console.log('participantsArrId', participantsArrId, '===@@@');
 
   return (
     <View

@@ -27,7 +27,7 @@ export const Stream = () => {
   );
   const {user} = useSelector((state: any) => state.userAuthReducer);
 
-  let streamId=
+  let streamId =
     streamMode == 'CONFERENCE'
       ? selectedRoomAsViewer.token
       : createdRoom.room.token;
@@ -37,17 +37,23 @@ export const Stream = () => {
       <MeetingProvider
         config={{
           meetingId: streamId,
-          micEnabled: true,
-          webcamEnabled: true,
+          micEnabled: streamMode == 'CONFERENCE' ? false : true,
+          webcamEnabled: streamMode == 'CONFERENCE' ? false : true,
           name: user.fullName,
           mode: streamMode,
           maxResolution: 'hd',
+          metaData: user, 
+          defaultCamera: 'front',
+          notification: {
+            title: "Code Sample",
+            message: "Meeting is running.",
+          },      
         }}
-        token={token}>
-        <LiveStreamContainer
-          userData={user}
-          navigation={navigation}
-        />
+        token={token}
+        joinWithoutUserInteraction={true}
+        
+        >
+        <LiveStreamContainer userData={user} navigation={navigation} />
       </MeetingProvider>
     </View>
   );

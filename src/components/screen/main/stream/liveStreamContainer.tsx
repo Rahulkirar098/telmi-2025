@@ -18,6 +18,12 @@ export const LiveStreamContainer = ({userData, navigation}: any) => {
       Alert.alert('Error', error.message);
       navigation.goBack();
     },
+    onParticipantJoined: participant => {
+      console.log(' onParticipantJoined', participant);
+    },
+    onParticipantLeft: participant => {
+      console.log(' onParticipantLeft', participant);
+    },
   });
 
   return (
