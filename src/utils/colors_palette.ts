@@ -7,4 +7,6 @@ export const colors = {
   red: 'rgba(255, 0, 0, 1)',
   backdropOpacity: 'rgba(255, 255, 255, 0.2)',
   lightGray: '#B5B5B5',
+  oliveGreen: 'rgba(30, 54, 53, 1)',
+  orange: 'rgba(255, 149, 43, 1)',
 };

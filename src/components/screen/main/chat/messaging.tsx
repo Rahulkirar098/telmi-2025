@@ -7,6 +7,8 @@ import {
   Text,
   StyleSheet,
   ImageBackground,
+  Image,
+  TouchableOpacity,
 } from 'react-native';
 import database from '@react-native-firebase/database';
 import {png} from '../../../../assets/png';
@@ -16,6 +18,7 @@ import {
   colors,
   horizontalScale,
   platform,
+  verticalScale
 } from '../../../../utils';
 
 export const MessagingScreen = ({route}: any) => {
@@ -33,6 +36,25 @@ export const MessagingScreen = ({route}: any) => {
         ...data[key],
       }));
       setMessages(list.sort((a, b) => a.timestamp - b.timestamp));
+
+      // ✅ Mark all messages from the other user as read
+      list.forEach(msg => {
+        if (msg.senderId !== currentUserID && !msg.readBy?.[currentUserID]) {
+          database()
+            .ref(`messages/${chatId}/${msg.id}/readBy/${currentUserID}`)
+            .set(true);
+        }
+      });
+
+      // ✅ Also mark lastMessageRead in userChats
+      if (list.length > 0) {
+        const lastMsg = list[list.length - 1];
+        if (lastMsg.senderId !== currentUserID) {
+          database()
+            .ref(`userChats/${currentUserID}/${otherUserID}`)
+            .update({lastMessageRead: true});
+        }
+      }
     });
 
     return () => ref.off('value', listener);
@@ -47,19 +69,28 @@ export const MessagingScreen = ({route}: any) => {
       senderId: currentUserID,
       text,
       timestamp: Date.now(),
+      readBy: {
+        [currentUserID]: true, // sender auto-marks as read
+      },
     };
 
     await database().ref(`messages/${chatId}`).push(messageData);
 
     // Update last message in userChats
+    // For current user (sender) - mark as read
     await database().ref(`userChats/${currentUserID}/${otherUserID}`).update({
       lastMessage: text,
       timestamp: Date.now(),
+      lastMessageSenderId: currentUserID,
+      lastMessageRead: true, // sender always sees it as read
     });
 
+    // For other user (receiver) - mark as unread
     await database().ref(`userChats/${otherUserID}/${currentUserID}`).update({
       lastMessage: text,
       timestamp: Date.now(),
+      lastMessageSenderId: currentUserID,
+      lastMessageRead: false, // receiver sees dot until they open chat
     });
 
     setText('');
@@ -86,16 +117,33 @@ export const MessagingScreen = ({route}: any) => {
                   flexDirection: 'row',
                   justifyContent: isSender ? 'flex-end' : 'flex-start',
                   marginVertical: 4,
-                  paddingHorizontal: 10,
+                  alignItems: 'center',
+                  paddingHorizontal: horizontalScale(10),
                 }}>
-                <View
-                  style={{
-                    backgroundColor: isSender ? colors.red : colors.green,
-                    padding: 10,
-                    borderRadius: 10,
-                    maxWidth: '70%',
-                  }}>
-                  <Text>{item.text}</Text>
+                <View style={{alignItems: 'flex-end', maxWidth: '70%'}}>
+                  <View
+                    style={{
+                      backgroundColor: isSender
+                        ? colors.oliveGreen
+                        : colors.orange,
+                      padding: horizontalScale(10),
+                      borderRadius: horizontalScale(10),
+                    }}>
+                    <Text style={{color: colors.white}}>{item.text}</Text>
+                  </View>
+                  {/* ✅ Read/Unread status for sender */}
+                  {isSender && (
+                    <Text
+                      style={{
+                        fontSize: 10,
+                        color: item.readBy?.[otherUserID]
+                          ? 'lightgreen'
+                          : 'gray',
+                        marginLeft: 6,
+                      }}>
+                      {item.readBy?.[otherUserID] ? 'Read' : 'Sent'}
+                    </Text>
+                  )}
                 </View>
               </View>
             );
@@ -103,21 +151,28 @@ export const MessagingScreen = ({route}: any) => {
         />
 
         <View
-          style={{flexDirection: 'row', borderWidth: 1, borderColor: '#ccc'}}>
+          style={{
+            flexDirection: 'row',
+            padding: horizontalScale(10),
+            gap: horizontalScale(8),
+          }}>
           <TextInput
             value={text}
             onChangeText={setText}
             style={{
               flex: 1,
               borderWidth: 1,
-              borderColor: '#ccc',
-              padding: 10,
+              borderColor: colors.offWhite,
+              padding: horizontalScale(10),
               color: colors.white,
+              borderRadius: horizontalScale(50),
             }}
             placeholderTextColor={colors.white}
             placeholder="Type a message..."
           />
-          <Button title="Send" onPress={sendMessage} />
+          <TouchableOpacity style={styles.sentIcon} onPress={sendMessage}>
+            <Image source={png.sent} style={{width: 15, height: 15}} />
+          </TouchableOpacity>
         </View>
       </ImageBackground>
     </View>
@@ -132,9 +187,9 @@ const styles = StyleSheet.create({
   right: {justifyContent: 'flex-end'},
   bubble: {
     maxWidth: '78%',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 16,
+    paddingHorizontal: horizontalScale(12),
+    paddingVertical: verticalScale(8),
+    borderRadius: horizontalScale(16),
   },
   meBubble: {backgroundColor: '#111827', borderTopRightRadius: 4},
   themBubble: {backgroundColor: '#e5e7eb', borderTopLeftRadius: 4},
@@ -145,28 +200,36 @@ const styles = StyleSheet.create({
   composer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    padding: 10,
+    padding: horizontalScale(10),
     borderTopWidth: 1,
-    borderTopColor: '#eee',
-    gap: 8,
+    borderTopColor: colors.offWhite,
+    gap: horizontalScale(8),
   },
   input: {
     flex: 1,
-    minHeight: 40,
-    maxHeight: 120,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    minHeight: verticalScale(40),
+    maxHeight: verticalScale(120),
+    paddingHorizontal: horizontalScale(12),
+    paddingVertical: verticalScale(8),
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 16,
+    borderRadius: horizontalScale(16),
   },
   sendBtn: {
-    paddingHorizontal: 14,
-    height: 40,
-    borderRadius: 16,
+    paddingHorizontal: horizontalScale(14),
+    height: verticalScale(40),
+    borderRadius: horizontalScale(16),
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#111827',
   },
   sendText: {color: '#fff', fontWeight: '700'},
+  sentIcon: {
+    width: horizontalScale(40),
+    height: horizontalScale(40),
+    backgroundColor: colors.orange,
+    borderRadius: horizontalScale(25),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

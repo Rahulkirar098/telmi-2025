@@ -34,5 +34,6 @@ export const png = {
   blLike:require('./blLike.png'),
   blView:require('./blView.png'),
   edit:require('./editIcon.png'),
+  sent: require('./sent.png'),
 
 };

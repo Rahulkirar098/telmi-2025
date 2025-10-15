@@ -1,5 +1,5 @@
 // UserListScreen.tsx
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,9 +10,9 @@ import {
   Image,
   TextInput,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {listenForChatList} from './firebaseChat';
-import {png} from '../../../../assets/png';
+import { useNavigation } from '@react-navigation/native';
+import { listenForChatList } from './firebaseChat';
+import { png } from '../../../../assets/png';
 import {
   width,
   height,
@@ -21,7 +21,8 @@ import {
   platform,
   verticalScale,
 } from '../../../../utils';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
+import dayjs from 'dayjs';
 
 // Types
 type RootStackParamList = {
@@ -29,7 +30,7 @@ type RootStackParamList = {
 };
 
 export const UserListScreen = () => {
-  const {userId} = useSelector((state: any) => state.userAuthReducer);
+  const { userId } = useSelector((state: any) => state.userAuthReducer);
   const currentUserId = userId;
   const navigation = useNavigation<RootStackParamList>();
 
@@ -44,7 +45,7 @@ export const UserListScreen = () => {
       setFilteredList(data); // default full list
     });
     return unsubscribe;
-  }, []);
+  }, [currentUserId]);
 
   // Search handler
   const handleSearch = (text: string) => {
@@ -60,8 +61,8 @@ export const UserListScreen = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
-      <ImageBackground source={png.bg} style={{width, height}}>
+    <View style={{ flex: 1 }}>
+      <ImageBackground source={png.bg} style={{ width, height }}>
         <View style={styles.container}>
           {/* Search bar always visible */}
           <TextInput
@@ -78,60 +79,66 @@ export const UserListScreen = () => {
               <Text style={styles.noUserText}>No users found</Text>
             </View>
           ) : /* Case 2: Search has no matches */
-          filteredList.length === 0 ? (
-            <View style={styles.center}>
-              <Text style={styles.noResultText}>
-                No results for "{searchQuery}"
-              </Text>
-            </View>
-          ) : (
-            /* Case 3: Show filtered list */
-            <FlatList
-              data={filteredList}
-              keyExtractor={item => item.userId}
-              renderItem={({item}) => {
-                const firstLetter =
-                  item.userName?.charAt(0).toUpperCase() || '?';
-                const profileUri = item.userProfile;
+            filteredList.length === 0 ? (
+              <View style={styles.center}>
+                <Text style={styles.noResultText}>
+                  No results for "{searchQuery}"
+                </Text>
+              </View>
+            ) : (
+              /* Case 3: Show filtered list */
+              <FlatList
+                data={filteredList}
+                keyExtractor={item => item.userId}
+                renderItem={({ item }) => {
+                  const firstLetter = item.userName?.charAt(0).toUpperCase() || '?';
+                  const profileUri = item.userProfile;
+                  const timeLabel = item.timestamp
+                    ? dayjs(item.timestamp).format('hh:mm A')
+                    : '';
 
-                return (
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('MessagingScreen', {
-                        chatId: item.chatId,
-                        currentUserID: userId,
-                        otherUserID: item.userId,
-                      })
-                    }
-                    style={styles.row}>
-                    {/* Avatar */}
-                    {profileUri ? (
-                      <Image
-                        source={{uri: profileUri}}
-                        style={styles.avatarImage}
-                      />
-                    ) : (
-                      <View style={styles.avatarFallback}>
-                        <Text style={styles.avatarFallbackText}>
-                          {firstLetter}
+                  // ✅ Check if last message is unread
+                  const isUnread =
+                    item.lastMessageSenderId !== currentUserId && !item.lastMessageRead;
+
+                  return (
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate('MessagingScreen', {
+                          chatId: item.chatId,
+                          currentUserID: userId,
+                          otherUserID: item.userId,
+                        })
+                      }
+                      style={styles.row}>
+                      {/* Avatar */}
+                      {profileUri ? (
+                        <Image source={{ uri: profileUri }} style={styles.avatarImage} />
+                      ) : (
+                        <View style={styles.avatarFallback}>
+                          <Text style={styles.avatarFallbackText}>{firstLetter}</Text>
+                        </View>
+                      )}
+
+                      {/* User Info */}
+                      <View style={styles.rowCenter}>
+                        <Text style={styles.name}>{item.userName || 'Unknown User'}</Text>
+                        <Text style={styles.preview} numberOfLines={1}>
+                          {item.lastMessage || 'No messages yet'}
                         </Text>
                       </View>
-                    )}
 
-                    {/* User Info */}
-                    <View style={styles.rowCenter}>
-                      <Text style={styles.name}>
-                        {item.userName || 'Unknown User'}
-                      </Text>
-                      <Text style={styles.preview} numberOfLines={1}>
-                        {item.lastMessage || 'No messages yet'}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              }}
-            />
-          )}
+                      {/* Right side: Time + unread dot */}
+                      <View style={styles.rowRight}>
+                        <Text style={styles.time}>{timeLabel}</Text>
+                        {isUnread && <View style={styles.unreadDot} />}
+                      </View>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+
+            )}
         </View>
       </ImageBackground>
     </View>
@@ -145,11 +152,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(16),
     paddingTop: platform == 'ios' ? '15%' : '10%',
   },
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   row: {
     flexDirection: 'row',
     padding: 12,
@@ -189,9 +192,19 @@ const styles = StyleSheet.create({
   },
   preview: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#d1d5db',
     marginTop: 2,
   },
+  rowRight: { alignItems: 'flex-end', marginLeft: 8 },
+  time: { fontSize: 11, color: '#9ca3af' },
+  badge: {
+    marginTop: 6,
+    backgroundColor: '#ef4444',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
+  badgeText: { color: '#fff', fontSize: 11, fontWeight: '700' },
   searchInput: {
     height: verticalScale(50),
     borderColor: '#ccc',
@@ -201,12 +214,14 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(12),
     color: colors.white,
   },
-  noUserText: {
-    fontSize: 16,
-    color: colors.white,
+  noUserText: { fontSize: 16, color: colors.white },
+  noResultText: { fontSize: 16, color: '#fca5a5' },
+  unreadDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'green',
+    marginTop: 6,
   },
-  noResultText: {
-    fontSize: 16,
-    color: '#FFD700', // gold/yellow for visibility
-  },
+
 });
